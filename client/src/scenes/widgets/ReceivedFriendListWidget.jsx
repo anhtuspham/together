@@ -3,31 +3,31 @@ import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "../../state";
+import {setFriends, setReceivedFriend} from "../../state";
 
-const RequestFriendListWidget = ({ userId }) => {
+const ReceivedFriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const receivedFriends = useSelector((state) => state.user.receivedFriends);
 
-  const getFriends = async () => {
+  const getReceivedFriendsRequest = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${userId}/friends`,
+      `http://localhost:3001/users/${userId}/received-friend-requests`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     const data = await response.json();
-    dispatch(setFriends({ friends: data }));
+    dispatch(setReceivedFriend({ receivedFriends: data }));
   };
 
   useEffect(() => {
-    getFriends();
+      getReceivedFriendsRequest();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
- 
+
   return (
     <WidgetWrapper>
       <Typography
@@ -39,18 +39,18 @@ const RequestFriendListWidget = ({ userId }) => {
         Requests for You
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
-        {friends.map((friend) => (
+        {receivedFriends ? receivedFriends.map((receivedFriend) => (
           <Friend
-            key={friend._id}
-            friendId={friend._id}
-            name={`${friend.firstName} ${friend.lastName}`}
-            subtitle={friend.occupation}
-            userPicturePath={friend.picturePath}
+            key={receivedFriend._id}
+            friendId={receivedFriend._id}
+            name={`${receivedFriend.firstName} ${receivedFriend.lastName}`}
+            subtitle={receivedFriend.occupation}
+            userPicturePath={receivedFriend.picturePath}
           />
-        ))}
+        )) : null}
       </Box>
     </WidgetWrapper>
   );
 };
 
-export default RequestFriendListWidget;
+export default ReceivedFriendListWidget;

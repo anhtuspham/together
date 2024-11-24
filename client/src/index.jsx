@@ -34,7 +34,6 @@ const store = configureStore({
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-console.log('id: ', import.meta.env.Vite);
 
 root.render(
   <React.StrictMode>

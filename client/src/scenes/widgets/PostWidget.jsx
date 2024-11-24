@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {setPost} from '../../state';
+import {deletePost, setPost} from '../../state';
 import axios from 'axios';
 
 import {
@@ -36,13 +36,14 @@ const PostWidget = ({
     const [editedDescription, setEditedDescription] = useState(description);
     const [isComments, setIsComments] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [newcomment, setNewComment] = useState('');
+    const [newComment, setNewComment] = useState('');
     const [PostCategory, setPostCategory] = useState(false);
 
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
     const token = useSelector((state) => state.token);
     const loggedInUserId = useSelector((state) => state.user._id);
+    const port = import.meta.env.VITE_PORT_BACKEND;
     //As likes is a map, we will check if the current logged in user is
     // present in the post likes map
 
@@ -70,7 +71,7 @@ const PostWidget = ({
     //     .catch(error => {
     //       console.error(error);
     //     });
-    // }, [postId, token, newcomment, loadcomments]);
+    // }, [postId, token, newComment, loadcomments]);
 
     const isOwner = loggedInUserId === postUserId;
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -78,12 +79,13 @@ const PostWidget = ({
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`http://localhost:3001/posts/${postId}`, {
+            await axios.delete(`${port}/posts/${postId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            dispatch(setPost({postId})); // Cập nhật Redux Store
+            dispatch(deletePost({postId}))
+            // dispatch(setPost({postId})); // Cập nhật Redux Store
         } catch (error) {
             console.error("Failed to delete post", error);
         }
@@ -92,7 +94,7 @@ const PostWidget = ({
     const handleUpdatePost = async () => {
         try {
             const response = await axios.patch(
-                `http://localhost:3001/posts/${postId}`,
+                `${port}/posts/${postId}`,
                 {description: editedDescription},
                 {
                     headers: {
@@ -109,7 +111,7 @@ const PostWidget = ({
     };
 
     const patchLike = async () => {
-        const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
+        const response = await fetch(`${port}/posts/${postId}/like`, {
             method: "PATCH",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -125,11 +127,11 @@ const PostWidget = ({
     const postComment = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:3001/posts/${postId}/comment`,
+                `${port}/posts/${postId}/comment`,
                 {
                     userId: loggedInUserId,
                     postId: postId,
-                    comment: newcomment,
+                    comment: newComment,
                 },
                 {
                     headers: {
@@ -148,7 +150,7 @@ const PostWidget = ({
     };
 
     const handleShare = () => {
-        const postUrl = `http://localhost:3001/posts`;
+        const postUrl = `${port}/posts`;
         navigator.clipboard.writeText(postUrl);
     };
 
@@ -230,7 +232,7 @@ const PostWidget = ({
                     height="auto"
                     alt="post"
                     style={{borderRadius: "0.75rem", marginTop: "0.75rem"}}
-                    src={`http://localhost:3001/assets/${picturePath}`}
+                    src={`${port}/assets/${picturePath}`}
                 />
             )}
 
@@ -282,7 +284,7 @@ const PostWidget = ({
                         sx={{p: '0.3rem'}}
                         onChange={(e) => setNewComment(e.target.value)}
                     />
-                    <Button variant='contained' size='small'>
+                    <Button variant='contained' size='small' onClick={() => addComment()}>
                         Add
                     </Button>
 

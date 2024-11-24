@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
 const friendship = new mongoose.Schema(
-  {
-    userId: { type: mongoose.Types.ObjectId, ref: "User" },
-    requestedId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
+    {
+        userId: {type: mongoose.Types.ObjectId, ref: "User"},
+        senderId: {
+            type: mongoose.Types.ObjectId,
+            ref: "User",
+        },
+        receiverId: {
+            type: mongoose.Types.ObjectId,
+            ref: "User",
+        },
+        status: {type: String, enum: ["none", "waiting, pending_sent, pending_received, friend"]},
     },
-    receivedId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-    },
-    status: { type: String, enum: ["pending", "accepted", "rejected"] },
-  },
-  { timestamps: true }
+    {timestamps: true}
 );
 
 const Friendship = mongoose.model("Friendship", friendship);

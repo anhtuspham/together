@@ -5,7 +5,8 @@ import UserWidget from "../../scenes/widgets/UserWidget";
 import MyPostWidget from "../../scenes/widgets/MyPostWidget";
 import PostsWidget from "../../scenes/widgets/PostsWidget";
 import FriendListWidget from "../../scenes/widgets/FriendListWidget";
-import RequestFriendListWidget from "../widgets/RequestFriend";
+import ReceivedFriendListWidget from "../widgets/ReceivedFriendListWidget.jsx";
+import SentFriendListWidget from "../widgets/SentFriendListWidget.jsx";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px");
@@ -35,7 +36,9 @@ const HomePage = () => {
           <Box flexBasis="20%">
             <FriendListWidget userId={_id} />
             <Box m="2rem 0" />
-            <RequestFriendListWidget userId={_id} />
+            <ReceivedFriendListWidget userId={_id} />
+              <Box m="2rem 0" />
+            <SentFriendListWidget userId={_id} />
           </Box>
         )}
       </Box>

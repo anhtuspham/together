@@ -3,9 +3,13 @@ import {
     getUser,
     getUserFriends,
     searchUser,
-    addRemoveFriend,
     sendFriendRequest,
-    getReceivedFriendRequests, getSentFriendRequests
+    getReceivedFriendRequests,
+    getSentFriendRequests,
+    acceptFriendRequest,
+    rejectFriendRequest,
+    removeFriend,
+    getFriendStatus
 } from "../controllers/users.js";
 import {verifyToken} from "../middleware/auth.js";
 
@@ -19,13 +23,17 @@ router.get("/search", verifyToken, searchUser);
 //Then we call getUser that will display info of the user they are trying to access
 router.get("/:id", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
-router.get('/:userId/received-friend-requests', getReceivedFriendRequests);
-router.get('/:userId/sent-friend-requests', getSentFriendRequests);
+router.get('/:userId/received-friend-requests', verifyToken, getReceivedFriendRequests);
+router.get('/:userId/sent-friend-requests', verifyToken, getSentFriendRequests);
+router.get('/:id/:friendId/friend-status', verifyToken, getFriendStatus)
 
 //-----------------UPDATE------------
 //.patch allows you to update database
-router.patch("/:id/:friendId", verifyToken, addRemoveFriend);
-router.post("/addFriend", verifyToken, sendFriendRequest)
+router.patch("/:id/:friendId", verifyToken, removeFriend);
+router.post("/add-friend", verifyToken, sendFriendRequest)
+
+router.post("/:friendId/accept-friend", verifyToken, acceptFriendRequest);
+router.post("/:friendId/reject-friend", verifyToken, rejectFriendRequest);
 // router.patch('/:id', verifyToken, updateUser);
 
 export default router;

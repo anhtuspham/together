@@ -11,7 +11,7 @@ const friendship = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: "User",
         },
-        status: {type: String, enum: ["none", "waiting, pending_sent, pending_received, friend"]},
+        status: {type: String, enum: ["none", "pending", "friend"]},
     },
     {timestamps: true}
 );

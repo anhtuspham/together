@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema(
         location: String,
         occupation: String,
         friendShip: {
-            type: mongoose.Types.ObjectId, ref: 'User'
+            type: mongoose.Types.ObjectId, ref: 'FriendShip'
         }
     },
     {

@@ -30,13 +30,27 @@ export const authSlice = createSlice({
             }
         },
         setReceivedFriend: (state, action) => {
-            if( state.user){
-                state.user.receivedFriends = action.payload.receivedFriends;
+            if(state.user){
+                if(!state.user.receivedFriend){
+                    state.user.receivedFriends = [];
+                }
+                state.user.receivedFriends.push(action.payload.receivedFriends);
             }
         },
         setSentFriends: (state, action) => {
-            if( state.user){
-                state.user.sentFriends = action.payload.sentFriends;
+            if (state.user) {
+                if(!state.user.sentFriends){
+                    state.user.sentFriends = [];
+                }
+                state.user.sentFriends.push(action.payload.sentFriends);
+            }
+        },
+        removeSentFriend: (state, action) => {
+            if (state.user && state.user.sentFriends) {
+                // Loại bỏ phần tử khỏi mảng dựa trên `id`
+                state.user.sentFriends = state.user.sentFriends.filter(
+                    (friend) => friend.senderId !== action.payload.id
+                );
             }
         },
         setPosts: (state, action) => {
@@ -65,6 +79,17 @@ export const authSlice = createSlice({
     }
 })
 
-export const {setMode, setLogin, setLogout, setFriends, setReceivedFriend, setSentFriends, setPost, setPosts, deletePost} = authSlice.actions;
+export const {
+    setMode,
+    setLogin,
+    setLogout,
+    setFriends,
+    setReceivedFriend,
+    setSentFriends,
+    removeSentFriend,
+    setPost,
+    setPosts,
+    deletePost
+} = authSlice.actions;
 
 export default authSlice.reducer;

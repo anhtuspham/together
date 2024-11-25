@@ -11,21 +11,26 @@ const SentFriendListWidget = ({ userId }) => {
     const token = useSelector((state) => state.token);
     const sentFriends = useSelector((state) => state.user.sentFriends);
 
-    const getSentFriendsRequest = async () => {
-        const response = await fetch(
-            `http://localhost:3001/users/${userId}/sent-friend-requests`,
-            {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            }
-        );
-        const data = await response.json();
-        dispatch(setSentFriends({ sentFriends: data }));
-    };
+    console.log('sentFriend in sent:', sentFriends);
 
-    useEffect(() => {
-        getSentFriendsRequest();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // const getSentFriendsRequest = async () => {
+    //     const response = await fetch(
+    //         `http://localhost:3001/users/${userId}/sent-friend-requests`,
+    //         {
+    //             method: "GET",
+    //             headers: { Authorization: `Bearer ${token}` },
+    //         }
+    //     );
+    //     const data = await response.json();
+    //     dispatch(setSentFriends({ sentFriends: data }));
+    //     console.log('friend sent: ', data);
+    //
+    // };
+    //
+    // useEffect(() => {
+    //     getSentFriendsRequest();
+    // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 
 
     return (

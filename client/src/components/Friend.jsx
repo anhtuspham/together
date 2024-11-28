@@ -13,6 +13,9 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const {_id} = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
     const friends = useSelector((state) => state.user.friends);
+    const sentFriends = useSelector(
+        (state) => state.user.sentFriends || [] // Tránh lỗi undefined
+    );
     const [friendStatus, setFriendStatus] = useState(null);
     const [error, setError] = useState(null);
 
@@ -94,8 +97,13 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
             const data = await response.json();
-            console.log('data sent friend in friendjsx,', data);
-            dispatch(setSentFriends({sentFriends: data.friendship}));
+            console.log(`data received in add new friendRequest: ${data}`);
+
+
+            // dispatch(setSentFriends({sentFriends: data.friendship}));
+            dispatch(setSentFriends({
+                sentFriends: [...sentFriends, data.friendship], // Gộp dữ liệu cũ và mới
+            }));
         } catch (error) {
             setError(error.message);
         }
@@ -194,6 +202,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                         <IconButton
                             onClick={async () => {
                                 try {
+                                    console.log(`id, friendID: ${_id} ${friendId}`)
                                     await addNewFriendRequest(_id, friendId);
                                 } catch (error) {
                                     console.error("Error sending friend request:", error.message);

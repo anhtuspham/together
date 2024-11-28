@@ -37,7 +37,7 @@ const groupSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-}, {timeseries: true,});
+}, {timestamps: true,});
 
 const Group = mongoose.model('Group', groupSchema);
 

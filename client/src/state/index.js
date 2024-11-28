@@ -2,7 +2,10 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     mode: "light",
-    user: [],
+    user: {
+        sentFriends: [],
+
+    },
     token: null,
     posts: [],
 };
@@ -30,26 +33,58 @@ export const authSlice = createSlice({
             }
         },
         setReceivedFriend: (state, action) => {
-            if(state.user){
-                if(!state.user.receivedFriend){
+            if (state.user) {
+                if (!state.user.receivedFriends) {
                     state.user.receivedFriends = [];
                 }
-                state.user.receivedFriends.push(action.payload.receivedFriends);
+
+                state.user.receivedFriends = [
+                    ...state.user.receivedFriends,
+                    ...action.payload.receivedFriends,
+                ];
             }
         },
         setSentFriends: (state, action) => {
             if (state.user) {
-                if(!state.user.sentFriends){
+                // Đảm bảo `sentFriends` là một mảng
+                if (!Array.isArray(state.user.sentFriends)) {
                     state.user.sentFriends = [];
+                    console.log(`state.user.sentfriend: ${state.user.sentFriends}`)
                 }
-                state.user.sentFriends.push(action.payload.sentFriends);
+                console.log(`state.user.sentFriends123123123 ${state.user.sentFriends}`,);
+
+                const newFriends = Array.isArray(action.payload.sentFriends)
+                    ? action.payload.sentFriends
+                    : [action.payload.sentFriends];
+
+                console.log(`currentStateSentFriends:`, action.payload.sentFriends, state.user.sentFriends);
+
+                // Lọc bỏ bạn bè trùng lặp
+                const uniqueFriends = newFriends.filter(
+                    (friend) =>
+                        !state.user.sentFriends.some(
+                            (existingFriend) => existingFriend._id === friend._id
+                        )
+                );
+
+                // Thêm bạn bè mới nếu có
+                if (uniqueFriends.length > 0) {
+                    state.user.sentFriends = [...state.user.sentFriends, ...uniqueFriends];
+                }
             }
         },
         removeSentFriend: (state, action) => {
             if (state.user && state.user.sentFriends) {
-                // Loại bỏ phần tử khỏi mảng dựa trên `id`
                 state.user.sentFriends = state.user.sentFriends.filter(
                     (friend) => friend.senderId !== action.payload.id
+                );
+            }
+        },
+
+        removeReceivedFriend: (state, action) => {
+            if (state.user && state.user.receivedFriends) {
+                state.user.receivedFriends = state.user.receivedFriends.filter(
+                    (friend) => friend.receiverId !== action.payload.id
                 );
             }
         },
@@ -87,6 +122,7 @@ export const {
     setReceivedFriend,
     setSentFriends,
     removeSentFriend,
+    removeReceivedFriend,
     setPost,
     setPosts,
     deletePost

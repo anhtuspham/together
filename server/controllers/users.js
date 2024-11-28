@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
+import mongoose from "mongoose";
 
 //----------------READ--------------
 export const getUser = async (req, res) => {
@@ -286,6 +287,8 @@ export const rejectFriendRequest = async (req, res) => {
 
 export const getReceivedFriendRequests = async (req, res) => {
     const {userId} = req.params;
+
+
     try {
         const friendRequests = await Friendship.find({
             receiverId: userId,
@@ -312,10 +315,15 @@ export const getSentFriendRequests = async (req, res) => {
     const {userId} = req.params;
     try {
         // Tìm tất cả lời mời kết bạn do user gửi
+        const test = await Friendship.find({senderId: userId});
         const friendRequests = await Friendship.find({
             senderId: userId,
             status: "pending"
         }).populate('receiverId', 'firstName lastName picturePath location'); // Populate thông tin người nhận
+
+        // console.log(`friendSHip request: ${friendRequests}`);
+
+        console.log("Sent friend requests for user time 1:",test, userId, friendRequests);
 
         // Trả về danh sách người nhận
         const result = friendRequests.map(request => ({
@@ -325,6 +333,8 @@ export const getSentFriendRequests = async (req, res) => {
             picturePath: request.receiverId.picturePath,
             occupation: request.receiverId.occupation,
         }));
+        console.log("Sent friend requests for user:", userId, friendRequests, result);
+
 
         return res.status(200).json(result);
     } catch (error) {

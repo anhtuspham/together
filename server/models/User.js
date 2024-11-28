@@ -39,19 +39,14 @@ const UserSchema = new mongoose.Schema(
             enum: ["active", "inactive", "banned"],
             default: "active",
         },
-        friends: {
-            type: Array,
-            default: [],
-        },
-        groups: {
-            type: Array,
-            default: [],
-        },
+        friends: [],
+        groups: [
+            {
+                groupId: {type: mongoose.Types.ObjectId, ref: "Group"},
+            }
+        ],
         location: String,
         occupation: String,
-        friendShip: {
-            type: mongoose.Types.ObjectId, ref: 'FriendShip'
-        }
     },
     {
         timestamps: true

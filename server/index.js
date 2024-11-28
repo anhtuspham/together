@@ -18,6 +18,7 @@ import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from './middleware/auth.js';
 import { Server } from "socket.io";
+import {getSentFriendRequests} from "./controllers/users.js";
 // import User from "./models/User.js";
 // import Post from "./models/Post.js";
 // import {users, posts} from "./data/index.js";
@@ -136,6 +137,20 @@ io.on("connection", (socket) => {
       socket.in(user._id).emit("message recieved", newMessageRecieved);
     });
   });
+
+  // // follow friend status
+  //   socket.on("sendFriendRequest", async (data) => {
+  //       const {senderId, receiverId} = data;
+  //       try{
+  //           const newFriendRequest = await getSentFriendRequests(senderId);
+  //           socket.emit("updateSentFriends", {friendRequest: newFriendRequest})
+  //
+  //       }catch (error) {
+  //           console.error("Error processing friend request:", error.message);
+  //           socket.emit("error", { message: "Failed to process friend request" });
+  //       }
+  //
+  //   })
 
   socket.off("setup", () => {
     console.log("USER DISCONNECTED");

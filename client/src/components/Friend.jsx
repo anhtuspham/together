@@ -14,10 +14,12 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const token = useSelector((state) => state.token);
     const friends = useSelector((state) => state.user.friends);
     const sentFriends = useSelector(
-        (state) => state.user.sentFriends || [] // Tránh lỗi undefined
-    );
-    const [friendStatus, setFriendStatus] = useState(null);
+        (state) => state.user.sentFriends || []);
+    const [friendStatus, setFriendStatus] = useState({status: null, isSender: null});
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    // const socket = io(import.meta.env.VITE_PORT_BACKEND);
+
 
     const {palette} = useTheme();
     const primaryLight = palette.primary.light;
@@ -28,7 +30,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const isFriend = friends.find((friend) => friend._id === friendId);
     const isSelf = friendId === _id;
 
-    const getFriendStatus = async () => {
+    const fetchFriendStatus = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/users/${_id}/${friendId}/friend-status`,
                 {
@@ -38,48 +40,34 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                         "Content-Type": "application/json",
                     }
                 });
+            if (!response.ok) throw new Error("Failed to fetch friend status");
             const data = await response.json();
-            return data.status;
-        } catch (e) {
-            setError(e.message);
-        }
-    }
-
-    useEffect(() => {
-        const fetchFriendStatus = async () => {
-            const status = await getFriendStatus();
-            setFriendStatus(status);
-        };
-        fetchFriendStatus();
-    }, [friendId, _id]);
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    const removeFriend = async () => {
-        try {
-            const response = await fetch(
-                `http://localhost:3001/users/${_id}/${friendId}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            if (!response.ok) {
-                throw new Error("Failed to update friend status");
-            }
-            const data = await response.json();
-            dispatch(setFriends({friends: data}));
+            setFriendStatus({status: data.status, isSender: data.isSender});
         } catch (error) {
             setError(error.message);
         }
+    }
+
+    const getSentFriendsRequest = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(
+                `http://localhost:3001/users/${_id}/sent-friend-requests`,
+                {
+                    method: "GET",
+                    headers: {Authorization: `Bearer ${token}`},
+                }
+            );
+            const data = await response.json();
+            dispatch(setSentFriends({sentFriends: data}));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const addNewFriendRequest = async (senderId, receiverId) => {
+    const addNewFriendRequest = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_PORT_BACKEND}/users/add-friend`,
@@ -89,7 +77,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({senderId, receiverId}),
+                    body: JSON.stringify({senderId: _id, receiverId: friendId}),
                 }
             );
 
@@ -97,17 +85,20 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
             const data = await response.json();
-            console.log(`data received in add new friendRequest: ${data}`);
+            await getSentFriendsRequest()
 
-
-            // dispatch(setSentFriends({sentFriends: data.friendship}));
-            dispatch(setSentFriends({
-                sentFriends: [...sentFriends, data.friendship], // Gộp dữ liệu cũ và mới
-            }));
         } catch (error) {
             setError(error.message);
         }
     };
+
+    useEffect(() => {
+        const init = async () => {
+            await fetchFriendStatus();
+            await getSentFriendsRequest();
+        };
+        init();
+    }, [friendId, _id]);
 
     const acceptFriendRequest = async () => {
         try {
@@ -149,6 +140,29 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
         }
     }
 
+    const removeFriend = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:3001/users/${_id}/${friendId}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Failed to update friend status");
+            }
+            const data = await response.json();
+            dispatch(setFriends({friends: data}));
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+
     if (error) {
         return <div>Error: {error}</div>;
     }
@@ -182,77 +196,53 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             </FlexBetween>
             {!isSelf && (
                 <Box display="flex" alignItems="center" gap="0.5rem">
-                    <Typography>{friendStatus ? `Status: ${friendStatus}` : "Loading..."}</Typography>
-                    {/* Tùy chỉnh nút dựa trên trạng thái quan hệ bạn bè */}
-                    {friendStatus === "friend" && (
+
+                    {friendStatus.status === "friend" && (
                         <IconButton
-                            onClick={async () => {
-                                try {
-                                    await removeFriend();
-                                } catch (error) {
-                                    console.error("Error removing friend:", error.message);
-                                }
-                            }}
+                            onClick={removeFriend}
                             sx={{backgroundColor: primaryLight, p: "0.6rem"}}
                         >
                             <PersonRemoveOutlined sx={{color: primaryDark}}/>
                         </IconButton>
                     )}
-                    {friendStatus === "none" && (
+                    {friendStatus.status === "none" && (
                         <IconButton
-                            onClick={async () => {
-                                try {
-                                    console.log(`id, friendID: ${_id} ${friendId}`)
-                                    await addNewFriendRequest(_id, friendId);
-                                } catch (error) {
-                                    console.error("Error sending friend request:", error.message);
-                                }
-                            }}
+                            onClick={addNewFriendRequest}
                             sx={{backgroundColor: primaryLight, p: "0.6rem"}}
                         >
                             <PersonAddOutlined sx={{color: primaryDark}}/>
                         </IconButton>
                     )}
-                    {friendStatus === "waiting" && (
-                        <Typography
-                            color={main}
-                            variant="body2"
-                            fontWeight="500"
-                            sx={{p: "0.6rem", backgroundColor: primaryLight, borderRadius: "8px"}}
-                        >
-                            Waiting...
-                        </Typography>
-                    )}
-                    {friendStatus === "requested" && (
+
+                    {friendStatus.status === 'pending' && (
                         <>
-                            <IconButton
-                                onClick={async () => {
-                                    try {
-                                        await acceptFriendRequest();
-                                    } catch (error) {
-                                        console.error("Error accepting friend request:", error.message);
-                                    }
-                                }}
-                                sx={{backgroundColor: primaryLight, p: "0.6rem"}}
-                            >
-                                <Typography sx={{color: primaryDark, fontSize: "0.75rem"}}>
-                                    Accept
+                            {friendStatus.isSender ? (
+                                <Typography
+                                    color={main}
+                                    variant="body2"
+                                    fontWeight="500"
+                                    sx={{p: "0.6rem", backgroundColor: primaryLight, borderRadius: "8px"}}
+                                >
+                                    Waiting...
                                 </Typography>
-                            </IconButton>
-                            <IconButton
-                                onClick={async () => {
-                                    try {
-                                        await rejectFriendRequest();
-                                    } catch (error) {
-                                        console.error("Error declining friend request:", error.message);
-                                    }
-                                }}
-                                sx={{backgroundColor: palette.error.light, p: "0.6rem"}}
-                            >
-                                <Typography sx={{color: palette.error.dark, fontSize: "0.75rem"}}>
-                                    Decline
-                                </Typography>
-                            </IconButton>
+                            ) : (<>
+                                <IconButton
+                                    onClick={acceptFriendRequest}
+                                    sx={{backgroundColor: primaryLight, p: "0.6rem"}}
+                                >
+                                    <Typography sx={{color: primaryDark, fontSize: "0.75rem"}}>
+                                        Accept
+                                    </Typography>
+                                </IconButton>
+                                <IconButton
+                                    onClick={rejectFriendRequest}
+                                    sx={{backgroundColor: palette.error.light, p: "0.6rem"}}
+                                >
+                                    <Typography sx={{color: palette.error.dark, fontSize: "0.75rem"}}>
+                                        Decline
+                                    </Typography>
+                                </IconButton>
+                            </>)}
                         </>
                     )}
                 </Box>

@@ -1,7 +1,6 @@
 import User from "../models/User.js";
 import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
-import mongoose from "mongoose";
 
 //----------------READ--------------
 export const getUser = async (req, res) => {
@@ -41,33 +40,30 @@ export const getUserFriends = async (req, res) => {
 
 export const getFriendStatus = async (req, res) => {
     try {
-        const { id, friendId } = req.params;
+        const { userId, friendId } = req.params;
 
-        const isExistedRequest = await Friendship.findOne({
+        const friendship = await Friendship.findOne({
             $or: [
-                { senderId: id, receiverId: friendId, status: "pending" },
-                { senderId: friendId, receiverId: id, status: "pending" },
+                { senderId: userId, receiverId: friendId},
+                { senderId: friendId, receiverId: userId},
             ],
         });
 
-        const isFriend = await Friendship.findOne({
-            $or: [
-                { senderId: id, receiverId: friendId, status: "accepted" },
-                { senderId: friendId, receiverId: id, status: "accepted" },
-            ],
-        });
-
-        let status;
-        if (isFriend) {
-            status = "friend";
-        } else if (isExistedRequest) {
-            status = "pending";
-        } else {
-            status = "none";
+        if(!friendship){
+            return res.status(200).json({status: 'none', isSender: null})
         }
 
-        // Trả về trạng thái dưới dạng JSON
-        return res.status(200).json({ status });
+        if(friendship.status === 'friend'){
+            return res.status(200).json({status: 'friend', isSender: null})
+        }
+
+        if(friendship.status === 'pending'){
+            return res.json({
+                status: "pending",
+                isSender: friendship?.senderId?.toString() === userId,
+            })
+        }
+
     } catch (e) {
         console.error("Error checking friendship status:", e);
         return res.status(500).json({ message: "Internal server error" });
@@ -342,3 +338,26 @@ export const getSentFriendRequests = async (req, res) => {
         return res.status(500).json({message: 'Could not fetch sent friend requests'});
     }
 };
+
+// export const getSentFriendRequests = async (userId) => {
+//     try {
+//         // Tìm tất cả lời mời kết bạn do user gửi
+//         const friendRequests = await Friendship.find({
+//             senderId: userId,
+//             status: "pending",
+//         }).populate("receiverId", "firstName lastName picturePath location occupation");
+//
+//         // Chuyển đổi dữ liệu lời mời kết bạn
+//         return friendRequests.map((request) => ({
+//             _id: request.receiverId._id,
+//             firstName: request.receiverId.firstName,
+//             lastName: request.receiverId.lastName,
+//             picturePath: request.receiverId.picturePath,
+//             occupation: request.receiverId.occupation,
+//         })); // Trả về dữ liệu đã xử lý
+//     } catch (error) {
+//         console.error("Error fetching sent friend requests:", error);
+//         throw new Error("Could not fetch sent friend requests");
+//     }
+// };
+

@@ -18,6 +18,7 @@ export const authSlice = createSlice({
             state.mode = state.mode === "light" ? "dark" : "light";
         },
         setLogin: (state, action) => {
+            console.log('user ', action.payload.user);
             state.user = action.payload.user;
             state.token = action.payload.token;
         },
@@ -49,15 +50,11 @@ export const authSlice = createSlice({
                 // Đảm bảo `sentFriends` là một mảng
                 if (!Array.isArray(state.user.sentFriends)) {
                     state.user.sentFriends = [];
-                    console.log(`state.user.sentfriend: ${state.user.sentFriends}`)
                 }
-                console.log(`state.user.sentFriends123123123 ${state.user.sentFriends}`,);
 
                 const newFriends = Array.isArray(action.payload.sentFriends)
                     ? action.payload.sentFriends
                     : [action.payload.sentFriends];
-
-                console.log(`currentStateSentFriends:`, action.payload.sentFriends, state.user.sentFriends);
 
                 // Lọc bỏ bạn bè trùng lặp
                 const uniqueFriends = newFriends.filter(

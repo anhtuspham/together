@@ -22,7 +22,6 @@ const ReceivedFriendListWidget = ({userId}) => {
             }
         );
         const data = await response.json();
-        console.log(`data in received: ${data}`);
         dispatch(setReceivedFriend({receivedFriends: data}));
     };
 

@@ -25,7 +25,7 @@ router.get("/:id", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
 router.get('/:userId/received-friend-requests', verifyToken, getReceivedFriendRequests);
 router.get('/:userId/sent-friend-requests', verifyToken, getSentFriendRequests);
-router.get('/:id/:friendId/friend-status', verifyToken, getFriendStatus)
+router.get('/:userId/:friendId/friend-status', verifyToken, getFriendStatus)
 
 //-----------------UPDATE------------
 //.patch allows you to update database

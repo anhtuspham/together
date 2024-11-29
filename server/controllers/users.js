@@ -40,24 +40,24 @@ export const getUserFriends = async (req, res) => {
 
 export const getFriendStatus = async (req, res) => {
     try {
-        const { userId, friendId } = req.params;
+        const {userId, friendId} = req.params;
 
         const friendship = await Friendship.findOne({
             $or: [
-                { senderId: userId, receiverId: friendId},
-                { senderId: friendId, receiverId: userId},
+                {senderId: userId, receiverId: friendId},
+                {senderId: friendId, receiverId: userId},
             ],
         });
 
-        if(!friendship){
+        if (!friendship) {
             return res.status(200).json({status: 'none', isSender: null})
         }
 
-        if(friendship.status === 'friend'){
+        if (friendship.status === 'friend') {
             return res.status(200).json({status: 'friend', isSender: null})
         }
 
-        if(friendship.status === 'pending'){
+        if (friendship.status === 'pending') {
             return res.json({
                 status: "pending",
                 isSender: friendship?.senderId?.toString() === userId,
@@ -66,7 +66,7 @@ export const getFriendStatus = async (req, res) => {
 
     } catch (e) {
         console.error("Error checking friendship status:", e);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({message: "Internal server error"});
     }
 };
 
@@ -121,35 +121,38 @@ export const searchUser = async (req, res) => {
 //------------------UPDATE--------------------------------
 export const removeFriend = async (req, res) => {
     try {
-        const {id, friendId} = req.params;
-        const user = await User.findById(id);
+        const {userId, friendId} = req.params;
+
+        const user = await User.findById(userId);
         const friend = await User.findById(friendId);
 
-        if (user.friends.includes(friendId)) {
-            //Remove friend Id from Users list
-            user.friends = user.friends.filter((id) => id !== friendId);
-            //Remove user id from Friends list
-            friend.friends = friend.friends.filter((id) => id !== id);
-        } else {
-            return res.status(404).json({message: "You dont have this friend"});
+        if (!user || !friend) {
+            return res.status(404).json({message: "User or friend not found"})
         }
+
+        if (!user.friends.some(id => id.toString() === friendId.toString())) {
+            return res.status(404).json({message: "You are not friend with this user"})
+        }
+
+        user.friends = user.friends.filter(id => id.toString() !== friendId.toString());
+        friend.friends = friend.friends.filter(id => id.toString() !== userId.toString());
+        await Friendship.deleteOne({
+            $or: [
+                {senderId: userId, receiverId: friendId, status: "friend"},
+                {senderId: friendId, receiverId: userId, status: "friend"}
+            ]
+        });
 
         await user.save();
         await friend.save();
 
-        const friends = await Promise.all(
-            user.friends.map((id) => User.findById(id))
-        );
+        const updatedFriends = await User.find({_id: {$in: user.friends}}).select("_id firstName lastName occupation location picturePath");
 
-        const formattedFriends = friends.map(
-            ({_id, firstName, lastName, occupation, location, picturePath}) => {
-                return {_id, firstName, lastName, occupation, location, picturePath};
-            }
-        );
-        res.status(200).json(formattedFriends);
+        res.status(200).json({message: "Delete successfully", updatedFriends});
 
 
     } catch (err) {
+        console.error(err);
         res.status(404).json({message: err.message});
     }
 };
@@ -167,7 +170,7 @@ export const sendFriendRequest = async (req, res) => {
         }
 
         const isFriend = sender.friends.some(friend => friend._id === receiverId);
-        if(isFriend){
+        if (isFriend) {
             return res.json({message: 'You are friend'})
         }
 
@@ -219,23 +222,19 @@ export const acceptFriendRequest = async (req, res) => {
     const {userId} = req.body; // ID của người nhận lời mời (từ token hoặc frontend gửi lên)
 
     try {
-        // Tìm lời mời kết bạn trong cơ sở dữ liệu
         const friendRequest = await Friendship.findOne({senderId: friendId, receiverId: userId});
 
         if (!friendRequest) {
             return res.status(404).json({message: "Friend request not found"});
         }
 
-        // Kiểm tra xem người nhận có phải là người được mời không
         if (friendRequest.receiverId.toString() !== userId) {
             return res.status(403).json({message: "You are not authorized to accept this request"});
         }
 
-        // Cập nhật trạng thái của lời mời thành 'accepted'
         friendRequest.status = "friend";
         await friendRequest.save();
 
-        // Thêm bạn bè vào danh sách của cả người gửi và người nhận
         await User.findByIdAndUpdate(friendRequest.senderId, {
             $addToSet: {friends: friendRequest.receiverId},
         });
@@ -319,7 +318,7 @@ export const getSentFriendRequests = async (req, res) => {
 
         // console.log(`friendSHip request: ${friendRequests}`);
 
-        console.log("Sent friend requests for user time 1:",test, userId, friendRequests);
+        console.log("Sent friend requests for user time 1:", test, userId, friendRequests);
 
         // Trả về danh sách người nhận
         const result = friendRequests.map(request => ({

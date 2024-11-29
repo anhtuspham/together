@@ -29,7 +29,7 @@ router.get('/:userId/:friendId/friend-status', verifyToken, getFriendStatus)
 
 //-----------------UPDATE------------
 //.patch allows you to update database
-router.patch("/:id/:friendId", verifyToken, removeFriend);
+router.patch("/:userId/:friendId", verifyToken, removeFriend);
 router.post("/add-friend", verifyToken, sendFriendRequest)
 
 router.post("/:friendId/accept-friend", verifyToken, acceptFriendRequest);

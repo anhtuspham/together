@@ -114,9 +114,9 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <IconButton>
+
+          <IconButton onClick = {() => navigate("/chat")}>
             <Message
-              onClick = {() => navigate("/chat")}
               sx={{ fontSize: "25px" }} />
           </IconButton>
 
@@ -167,9 +167,8 @@ const Navbar = () => {
             </Box> */}
 
 
-          <IconButton>
+          <IconButton onClick = {() => navigate("/saved/${user._id}")}>
             <Bookmarks
-              onClick = {() => navigate("/saved/${user._id}")}
               sx={{ fontSize: "25px" }} />
           </IconButton>
           {/* Dropdown for login and logout */}

@@ -32,7 +32,7 @@ const postSchema = mongoose.Schema(
             of: Boolean,
         },
         comments:  [
-            { type: mongoose.Types.ObjectId, ref: 'comment' }]
+            { type: mongoose.Types.ObjectId, ref: 'Comment' }]
     },
     {
         timestamps: true

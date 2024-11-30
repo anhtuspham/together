@@ -57,21 +57,21 @@ const PostWidget = ({
 
     const [loadcomments, setLoadComments] = useState([]);
 
-    // useEffect(() => {
-    //   axios.get(`http://localhost:3001/posts/${postId}/get/comment`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //     .then(response => {
-    //       setLoadComments(response.data.comments);
-    //       console.log('50', loadcomments);
-    //     })
-    //     .catch(error => {
-    //       console.error(error);
-    //     });
-    // }, [postId, token, newComment, loadcomments]);
+    useEffect(() => {
+      axios.get(`http://localhost:3001/posts/${postId}/get/comment`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          setLoadComments(response.data.comments);
+          console.log('50', loadcomments);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }, [postId, token, newComment, loadcomments]);
 
     const isOwner = loggedInUserId === postUserId;
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);

@@ -298,7 +298,7 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
                   fontSize="clamp(1rem, 2rem, 2.25rem)"
                   color="primary"
                 >
-                  Click On a User To Start Chatting 💬 !!
+                  Together
                 </Typography>
               </Box>
       )}

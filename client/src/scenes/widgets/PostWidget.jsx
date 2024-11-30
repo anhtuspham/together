@@ -55,23 +55,26 @@ const PostWidget = ({
     const main = palette.neutral.main;
     const primary = palette.primary.main;
 
-    const [loadcomments, setLoadComments] = useState([]);
+    const [loadcomments, setLoadComments] = useState(comments || []);
 
     useEffect(() => {
-      axios.get(`http://localhost:3001/posts/${postId}/get/comment`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then(response => {
-          setLoadComments(response.data.comments);
-          console.log('50', loadcomments);
+        fetch(`http://localhost:3001/posts/${postId}/comment`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
         })
-        .catch(error => {
-          console.error(error);
-        });
-    }, [postId, token, newComment, loadcomments]);
+            .then(response => response.json())
+            .then(data => {
+                setLoadComments(data.comments);
+                console.log('Comments with user info:', data.comments);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, [postId, token, newComment]);
+
 
     const isOwner = loggedInUserId === postUserId;
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -85,7 +88,7 @@ const PostWidget = ({
                 },
             });
             dispatch(deletePost({postId}))
-            // dispatch(setPost({postId})); // Cập nhật Redux Store
+            // dispatch(setPost({postId}));
         } catch (error) {
             console.error("Failed to delete post", error);
         }
@@ -103,7 +106,7 @@ const PostWidget = ({
                     },
                 }
             );
-            dispatch(setPost({post: response.data})); // Cập nhật Redux Store
+            dispatch(setPost({post: response.data}));
             setIsEditMode(false);
         } catch (error) {
             console.error("Failed to update post", error);
@@ -126,20 +129,26 @@ const PostWidget = ({
 
     const postComment = async () => {
         try {
-            const response = await axios.post(
-                `${port}/posts/${postId}/comment`,
-                {
+            const response = await fetch(`${port}/posts/${postId}/comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
                     userId: loggedInUserId,
                     postId: postId,
-                    comment: newComment,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
+                    content: newComment,
+                }),
+            });
+
+            console.log('response: ', response, loggedInUserId, postId, newComment)
+            if (!response.ok) {
+                throw new Error('Failed to post comment');
+            }
+            const data = await response.json();
+            setLoadComments((prevComments) => [...prevComments, data.newComment]);
+            setNewComment('');
         } catch (error) {
             console.error(error);
         }
@@ -277,7 +286,7 @@ const PostWidget = ({
                     <TextField
                         id='my-text-field'
                         label=''
-                        name='comment'
+                        name='content'
                         variant='standard'
                         placeholder='Add your Comment'
                         size='small'
@@ -288,12 +297,30 @@ const PostWidget = ({
                         Add
                     </Button>
 
-                    {loadcomments?.map(comment => (
-                        <Box key={comment._id}>
-                            <Typography sx={{color: main, m: '0.5rem 0', pl: '1rem'}}>
-                                {comment?.comment}</Typography>
-                        </Box>
-                    )).reverse()}
+                    {loadcomments?.map(comment => {
+                        if (!comment.userId) {
+                            console.error("Comment missing userId:", comment);
+                            return null;
+                        }
+
+                        return (
+                            <Box key={comment._id} display="flex" alignItems="center" mb="0.5rem">
+                                <img
+                                    src={`${port}/assets/${comment.userId.picturePath || 'default-avatar.png'}`}
+                                    alt="user-avatar"
+                                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "1rem" }}
+                                />
+                                <Box>
+                                    <Typography sx={{ color: main, fontWeight: "bold" }}>
+                                        {comment.userId.firstName || 'Unknown'} {comment.userId.lastName || ''}
+                                    </Typography>
+                                    <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
+                                        {comment.content}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        );
+                    })}
                     {comments.length > 1 && <Divider/>}
                 </Box>
             )}

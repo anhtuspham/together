@@ -117,14 +117,14 @@ export const likePost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
     try {
-        const {id} = req.params; // Lấy ID của bài post từ params
-        const updatedData = req.body; // Dữ liệu mới từ client gửi lên
+        const {id} = req.params;
+        const updatedData = req.body;
 
         // Tìm và cập nhật bài post
         const updatedPost = await Post.findByIdAndUpdate(
             id,
-            {$set: updatedData}, // Dữ liệu sẽ được cập nhật
-            {new: true} // Trả về bài post sau khi cập nhật
+            {$set: updatedData},
+            {new: true}
         );
 
         if (!updatedPost) {
@@ -157,38 +157,33 @@ export const deletePost = async (req, res) => {
 
 export const addComment = async (req, res) => {
     try {
-        const {id} = req.params;
-        const {userId, content} = req.body;
+        const { postId } = req.params;
+        const { userId, content } = req.body;
 
-        const post = await Post.findById(id);
-        if (!post) {
-            return res.status(404).json({message: "Post not found"});
-        }
+        console.log('userId, content, postId', userId, content, postId)
 
-        const newComment = await Comment.create({
-            userId,
-            postId: post._id,
-            content,
-        });
+        const newComment = await Comment.create({ userId, postId, content });
 
-        post.comments.push(newComment._id);
-        await post.save();
+        // Populate user data
+        const populatedComment = await newComment.populate('userId', 'firstName lastName picturePath');
 
-        res.status(200).json(newComment);
+        // Thêm comment ID vào Post
+        await Post.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
+
+        res.status(201).json({ newComment: populatedComment });
     } catch (err) {
-        console.error("Error:", err.message);
-        res.status(500).json({message: err.message});
+        res.status(500).json({ error: err.message });
     }
 };
 
 
 export const getComments = async (req, res) => {
     try {
-        const {id} = req.params;
+        const {postId} = req.params;
 
-        const post = await Post.findById(id).populate({
+        const post = await Post.findById(postId).populate({
             path: "comments",
-            populate: {path: "userId", select: "firstName lastName"},
+            populate: {path: "userId", select: "firstName lastName picturePath"},
         });
 
         if (!post) {

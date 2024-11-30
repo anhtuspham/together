@@ -11,25 +11,6 @@ const ReceivedFriendListWidget = ({userId}) => {
     const token = useSelector((state) => state.token);
     const receivedFriends = useSelector((state) => state.user.receivedFriends);
 
-    // console.log(`${receivedFriends} 123`);
-
-    const getReceivedFriendsRequest = async () => {
-        const response = await fetch(
-            `http://localhost:3001/users/${userId}/received-friend-requests`,
-            {
-                method: "GET",
-                headers: {Authorization: `Bearer ${token}`},
-            }
-        );
-        const data = await response.json();
-        dispatch(setReceivedFriend({receivedFriends: data}));
-    };
-
-    useEffect(() => {
-        getReceivedFriendsRequest();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-
     return (
         <WidgetWrapper>
             <Typography

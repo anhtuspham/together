@@ -3,7 +3,7 @@ import {Box, IconButton, Typography, useTheme} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {removeSentFriend, setFriends, setSentFriends} from "../state";
+import {setFriends, setReceivedFriend, setSentFriends} from "../state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
@@ -12,14 +12,12 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const navigate = useNavigate();
     const {_id} = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
-    const friends = useSelector((state) => state.user.friends);
-    const sentFriends = useSelector(
-        (state) => state.user.sentFriends || []);
+
     const [friendStatus, setFriendStatus] = useState({status: null, isSender: null});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    // const socket = io(import.meta.env.VITE_PORT_BACKEND);
-
+    const receivedFriends = useSelector((state) => state.user.receivedFriends);
+    const sentFriends = useSelector((state) => state.user.sentFriends);
 
     const {palette} = useTheme();
     const primaryLight = palette.primary.light;
@@ -59,6 +57,27 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             );
             const data = await response.json();
             dispatch(setSentFriends({sentFriends: data}));
+            console.log('data', data, 'set sent friend: ', sentFriends)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getReceivedFriendsRequest = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:3001/users/${_id}/received-friend-requests`,
+                {
+                    method: "GET",
+                    headers: {Authorization: `Bearer ${token}`},
+                }
+            );
+            const data = await response.json();
+            dispatch(setReceivedFriend({receivedFriends: data}));
+            console.log('data in received', data, 'set received friend: ', receivedFriends)
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -84,20 +103,37 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
             const data = await response.json();
-            await getSentFriendsRequest()
+            await fetchFriendStatus();
+            await getSentFriendsRequest();
+            await getReceivedFriendsRequest();
 
         } catch (error) {
             setError(error.message);
         }
     };
 
+    const getFriends = async () => {
+        const response = await fetch(
+            `http://localhost:3001/users/${_id}/friends`,
+            {
+                method: "GET",
+                headers: {Authorization: `Bearer ${token}`},
+            }
+        );
+        const data = await response.json();
+        dispatch(setFriends({friends: data}));
+    };
+
+
     useEffect(() => {
         const init = async () => {
             await fetchFriendStatus();
             await getSentFriendsRequest();
+            await getReceivedFriendsRequest();
+            await getFriends();
         };
         init();
-    }, [friendId, _id]);
+    }, [_id]);
 
     const acceptFriendRequest = async () => {
         try {
@@ -113,6 +149,9 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
             const data = await response.json();
+            await getReceivedFriendsRequest();
+            await fetchFriendStatus();
+            await getFriends();
 
         } catch (e) {
             setError(e.message);
@@ -133,6 +172,9 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
             const data = await response.json();
+            await getReceivedFriendsRequest();
+            await getFriends();
+            await fetchFriendStatus();
 
         } catch (e) {
             setError(e.message);
@@ -156,6 +198,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             }
             const data = await response.json();
             dispatch(setFriends({friends: data}));
+            await fetchFriendStatus();
         } catch (error) {
             setError(error.message);
         }
@@ -176,6 +219,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                         navigate(0);
                     }}
                 >
+                    {/* hello*/}
                     <Typography
                         color={main}
                         variant="h5"

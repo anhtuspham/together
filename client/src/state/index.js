@@ -4,7 +4,7 @@ const initialState = {
     mode: "light",
     user: {
         sentFriends: [],
-
+        receivedFriends: [],
     },
     token: null,
     posts: [],
@@ -35,19 +35,24 @@ export const authSlice = createSlice({
         },
         setReceivedFriend: (state, action) => {
             if (state.user) {
-                if (!state.user.receivedFriends) {
+                if (!Array.isArray(state.user.receivedFriends)) {
                     state.user.receivedFriends = [];
                 }
 
-                state.user.receivedFriends = [
-                    ...state.user.receivedFriends,
-                    ...action.payload.receivedFriends,
-                ];
+                const newReceivedFriend = Array.isArray(action.payload.receivedFriends) ? action.payload.receivedFriends : [action.payload.receivedFriends]
+
+                const uniqueReceivedFriend = newReceivedFriend.filter((friend) => !state.user.receivedFriends.some((existingFriend) => existingFriend._id === friend._id));
+
+                if (uniqueReceivedFriend.length > 0) {
+                    state.user.receivedFriends = [...state.user.receivedFriends, ...uniqueReceivedFriend];
+                    // state.user.receivedFriends = uniqueReceivedFriend;
+                } else {
+                    state.user.receivedFriends = action.payload.receivedFriends;
+                }
             }
         },
         setSentFriends: (state, action) => {
             if (state.user) {
-                // Đảm bảo `sentFriends` là một mảng
                 if (!Array.isArray(state.user.sentFriends)) {
                     state.user.sentFriends = [];
                 }
@@ -56,7 +61,6 @@ export const authSlice = createSlice({
                     ? action.payload.sentFriends
                     : [action.payload.sentFriends];
 
-                // Lọc bỏ bạn bè trùng lặp
                 const uniqueFriends = newFriends.filter(
                     (friend) =>
                         !state.user.sentFriends.some(
@@ -64,9 +68,10 @@ export const authSlice = createSlice({
                         )
                 );
 
-                // Thêm bạn bè mới nếu có
                 if (uniqueFriends.length > 0) {
                     state.user.sentFriends = [...state.user.sentFriends, ...uniqueFriends];
+                } else {
+                    state.user.sentFriends = action.payload.sentFriends;
                 }
             }
         },

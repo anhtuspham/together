@@ -20,6 +20,7 @@ export const verifyToken = async (req, res, next) => {
 
         //Now verify the token using our secret string 
         const verified = jwt.verify(token, process.env.JWT_SECRET);
+        console.log('jwt: ', verified, token)
         req.user = verified;
         //This moves on with the rest of the logic of a api route
         next();

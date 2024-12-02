@@ -68,7 +68,6 @@ const PostWidget = ({
             .then(response => response.json())
             .then(data => {
                 setLoadComments(data.comments);
-                console.log('Comments with user info:', data.comments);
             })
             .catch(error => {
                 console.error(error);
@@ -142,7 +141,6 @@ const PostWidget = ({
                 }),
             });
 
-            console.log('response: ', response, loggedInUserId, postId, newComment)
             if (!response.ok) {
                 throw new Error('Failed to post comment');
             }

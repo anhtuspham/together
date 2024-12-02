@@ -203,7 +203,6 @@ export const sendFriendRequest = async (req, res) => {
             link: `/profile/${senderId}`, // Link dẫn đến trang profile của người gửi
         });
 
-        console.log(`noti: ${notification}`);
         await notification.save();
 
         return res.status(201).json({
@@ -258,7 +257,6 @@ export const rejectFriendRequest = async (req, res) => {
         // Tìm lời mời kết bạn trong cơ sở dữ liệu
         const friendRequest = await Friendship.findOne({senderId: friendId, receiverId: userId});
 
-        console.log('senderId, userId', friendId, userId);
 
         if (!friendRequest) {
             return res.status(404).json({message: "Friend request not found"});
@@ -316,9 +314,7 @@ export const getSentFriendRequests = async (req, res) => {
             status: "pending"
         }).populate('receiverId', 'firstName lastName picturePath location'); // Populate thông tin người nhận
 
-        // console.log(`friendSHip request: ${friendRequests}`);
 
-        console.log("Sent friend requests for user time 1:", test, userId, friendRequests);
 
         // Trả về danh sách người nhận
         const result = friendRequests.map(request => ({
@@ -328,7 +324,6 @@ export const getSentFriendRequests = async (req, res) => {
             picturePath: request.receiverId.picturePath,
             occupation: request.receiverId.occupation,
         }));
-        console.log("Sent friend requests for user:", userId, friendRequests, result);
 
 
         return res.status(200).json(result);

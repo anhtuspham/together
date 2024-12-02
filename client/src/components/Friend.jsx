@@ -57,7 +57,6 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             );
             const data = await response.json();
             dispatch(setSentFriends({sentFriends: data}));
-            console.log('data', data, 'set sent friend: ', sentFriends)
         } catch (error) {
             console.error(error);
         } finally {
@@ -76,7 +75,6 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             );
             const data = await response.json();
             dispatch(setReceivedFriend({receivedFriends: data}));
-            console.log('data in received', data, 'set received friend: ', receivedFriends)
 
         } catch (error) {
             console.error(error);

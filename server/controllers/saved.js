@@ -6,7 +6,6 @@ import Saved from '../models/Saved.js';
 export const getSavedPosts = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("User Id is: ", id);
     const savedPosts = await Saved.find({ userId: id } );
     res.status(200).json(savedPosts);
   } catch (err) {

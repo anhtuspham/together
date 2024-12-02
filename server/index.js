@@ -127,7 +127,7 @@ io.on("connection", (socket) => {
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
 
-    //If the chat doesnt have any users
+    //If the chat doesn't have any users
     if (!chat.users) return console.log("chat.users not defined");
 
     //For a grp chat msg should only be sent to others and not self

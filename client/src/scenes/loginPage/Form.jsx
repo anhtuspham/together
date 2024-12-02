@@ -75,27 +75,36 @@ const Form = () => {
   const [loginError, setLoginError] = useState(false);
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-    formData.append("picturePath", values.picture.name);
+    try {
+      const formData = new FormData();
+      for (const key in values) {
+        formData.append(key, values[key]);
+      }
+      if (values.picture) {
+        formData.append("picturePath", values.picture.name);
+      }
 
-    //Sending form data for this particular api call
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
-      {
+      const response = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
         body: formData,
-      }
-    );
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
+      });
 
-    //If we were able to save users register info, we go to login page
-    if (savedUser) {
-      setPageType("login");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Đăng ký thất bại.");
+      }
+
+      const savedUser = await response.json();
+
+      // Reset form
+      onSubmitProps.resetForm();
+
+      if (savedUser) {
+        setPageType("login");
+      }
+    } catch (error) {
+      console.error("Đăng ký thất bại:", error.message);
+      alert(error.message);
     }
   };
 

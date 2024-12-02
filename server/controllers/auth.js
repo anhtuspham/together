@@ -21,6 +21,11 @@ export const register = async (req, res) => {
             occupation
         } = req.body;
 
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "The email already exists, please try another one." });
+        }
+
         // Bcrypt generates a random encryption
         const salt = await bcrypt.genSalt();
         //Will apply the encryption to our password to get new encrypted password
@@ -37,10 +42,10 @@ export const register = async (req, res) => {
             location,
             occupation,
             //We are giving a random value for viewed profile and impressions.
-            //Currently there is no logic for viewed profile and impressions
+            //Currently, there is no logic for viewed profile and impressions
             // in this project.
-            viewedProfile: Math.floor(Math.random() * 10000),
-            impressions: Math.floor(Math.random() * 10000)
+            // viewedProfile: Math.floor(Math.random() * 10000),
+            // impressions: Math.floor(Math.random() * 10000)
         });
 
         //Save the details of new user
@@ -49,6 +54,7 @@ export const register = async (req, res) => {
         res.status(201).json(savedUser);
         
     } catch (err) {
+        console.error(err.message);
         res.status(500).json({ error: err.message});
         
     }

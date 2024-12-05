@@ -14,6 +14,8 @@ import postRoutes from "./routes/posts.js";
 import chatRoutes from "./routes/chat.js";
 import savedRoutes from './routes/saved.js';
 import messageRoutes from "./routes/message.js";
+import notificationRoutes from './routes/notification.js';
+import groupRoutes from './routes/group.js';
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from './middleware/auth.js';
@@ -69,6 +71,8 @@ app.use("/posts", postRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", messageRoutes);
 app.use('/saved', savedRoutes);
+app.use('/notification', notificationRoutes);
+app.use('/group', groupRoutes);
 
 
 

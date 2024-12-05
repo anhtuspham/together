@@ -1,4 +1,4 @@
-import { useState, useRef} from "react";
+import {useState, useRef, useEffect} from "react";
 import {
   Box,
   Button,
@@ -71,10 +71,61 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
+  // notification
+  const [notifications, setNotifications] = useState([]);
+  const [isNotificationPopupOpen, setIsNotificationPopupOpen] = useState(false);
+
   //Making a variable for full name of user
   const fullName = `${user.firstName} ${user.lastName}`;
-    // const fullName = "Ashwin Nigam";
-    
+
+  const fetchNotifications = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/notification/${userId}`);
+      const data = await response.json();
+      console.log('data: ', data)
+      return data; // Giả sử API trả về một mảng notifications
+    } catch (error) {
+      console.error('Error fetching notifications', error);
+    }
+  };
+  const handleMarkAsRead = async (notifId) => {
+    // Gửi request để đánh dấu notification là đã đọc
+    try {
+      await fetch(`http://localhost:3001/notification/${notifId}/read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Cập nhật lại state để đánh dấu là đã đọc
+      setNotifications(notifications.map((notif) =>
+          notif._id === notifId ? { ...notif, isRead: true } : notif
+      ));
+    } catch (error) {
+      console.error('Error marking notification as read', error);
+    }
+  };
+
+
+  const handleNotificationClick = () => {
+    setIsNotificationPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsNotificationPopupOpen(false);
+  };
+
+
+
+  useEffect(() => {
+    const getNotifications = async () => {
+      const notifications = await fetchNotifications(user._id);
+      setNotifications(notifications);
+    };
+
+    getNotifications();
+  }, [user._id]);
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt} ref={spanRef}>
@@ -123,49 +174,56 @@ const Navbar = () => {
 
           {/* <Notifications sx={{ fontSize: "25px" }} /> */}
 
-           <IconButton onClick={handleClick} size="large">
-              <Badge
-                badgeContent={notification.length}
-                color="secondary"
-                showZero
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
+          <IconButton onClick={handleNotificationClick} size="large">
+            <Badge badgeContent={notifications.filter(n => !n.isRead).length} color="secondary" showZero>
+              <Notifications sx={{ fontSize: "25px" }} />
+            </Badge>
+          </IconButton>
+          {isNotificationPopupOpen && (
+              <Box
+                  position="fixed"
+                  right="210px"
+                  top="90px"
+                  width="300px"
+                  backgroundColor={background}
+                  boxShadow={3}
+                  padding="1rem"
+                  zIndex={10}
+                  display="flex"
+                  flexDirection="column"
+                  gap="1rem"
               >
-                <Notifications sx={{ fontSize: "25px" }} onClick = {() => navigate("/chat")}/>
-              </Badge>
-            </IconButton>
-            {/* <Box display="flex" flexDirection="column" gap="1.5rem">
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-              {!notification.length && (
-                <MenuItem onClick={handleClose}>No New Messages</MenuItem>
-              )} */}
-              {/* {notification.map((notif) => (
-                <MenuItem
-                  key={notif._id}
-                  onClick={() => {
-                    setSelectedChat(notif.chat);
-                    setNotification(notification.filter((n) => n !== notif));
-                    handleClose();
-                  }}
-                >
-                  {notif.chat.isGroupChat
-                    ? `New Message in ${notif.chat.chatName}`
-                    : `New Message from ${getSender(user, notif.chat.users)}`}
-                </MenuItem>
-              ))} */}
-            {/* </Menu>
-            </Box> */}
+                <Box display="flex" justifyContent="space-between">
+                  <Typography variant="h6">Notifications</Typography>
+                  <IconButton onClick={handleClosePopup}>
+                    <Close />
+                  </IconButton>
+                </Box>
 
+                {notifications.length === 0 ? (
+                    <Typography>No notifications</Typography>
+                ) : (
+                    notifications.map((notif) => (
+                        <Box key={notif._id} padding="0.5rem" borderBottom="1px solid" borderColor={neutralLight}>
+                          <Typography>{notif.message}</Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {notif.createdAt}
+                          </Typography>
+                          {!notif.isRead && (
+                              <Button
+                                  onClick={() => handleMarkAsRead(notif._id)}
+                                  variant="contained"
+                                  size="small"
+                                  color="primary"
+                              >
+                                Mark as Read
+                              </Button>
+                          )}
+                        </Box>
+                    ))
+                )}
+              </Box>
+          )}
 
           <IconButton onClick = {() => navigate("/saved/${user._id}")}>
             <Bookmarks
@@ -245,7 +303,7 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message 
+            <Message
               onClick = {() => navigate("/chat")}
               sx={{ fontSize: "25px" }} />
 
@@ -263,38 +321,6 @@ const Navbar = () => {
                 <Notifications fontSize="large" onClick = {() => navigate("/chat")}/>
               </Badge>
             </IconButton>
-              {/* <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-              >
-                {!notification.length && (
-                  <MenuItem onClick={handleClose}>No New Messages</MenuItem>
-                )}
-                {notification.map((notif) => (
-                  <MenuItem
-                    key={notif._id}
-                    onClick={() => {
-                      setSelectedChat(notif.chat);
-                      setNotification(notification.filter((n) => n !== notif));
-                      handleClose();
-                    }}
-                  >
-                    {notif.chat.isGroupChat
-                      ? `New Message in ${notif.chat.chatName}`
-                      : `New Message from ${getSender(user, notif.chat.users)}`}
-                  </MenuItem>
-                ))}
-              </Menu> */}
 
             <IconButton>
               <Bookmarks

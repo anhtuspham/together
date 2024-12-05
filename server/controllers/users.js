@@ -202,7 +202,6 @@ export const sendFriendRequest = async (req, res) => {
     try {
         const {senderId, receiverId} = req.body;
 
-        // Kiểm tra người gửi và người nhận có tồn tại không
         const sender = await User.findById(senderId);
         const receiver = await User.findById(receiverId);
         if (!sender || !receiver) {
@@ -217,7 +216,6 @@ export const sendFriendRequest = async (req, res) => {
         // Check relation between
 
 
-        // Kiểm tra xem đã có lời mời kết bạn đang chờ xử lý không
         const existingRequest = await Friendship.findOne({
             senderId,
             receiverId,
@@ -227,7 +225,6 @@ export const sendFriendRequest = async (req, res) => {
             return res.status(400).json({message: "Lời mời kết bạn đã được gửi"});
         }
 
-        // Tạo mới lời mời kết bạn
         const friendship = new Friendship({
             senderId,
             receiverId,
@@ -235,10 +232,9 @@ export const sendFriendRequest = async (req, res) => {
         });
         await friendship.save();
 
-        // Tạo thông báo cho người nhận
         const notification = new Notification({
             userId: receiverId, // Người nhận thông báo
-            message: `${sender.firstName} ${sender.lastName} đã gửi cho bạn một lời mời kết bạn.`,
+            message: `${sender.firstName} ${sender.lastName} sent a friend request.`,
             type: "follow", // Loại thông báo (có thể chỉnh sửa nếu cần)
             link: `/profile/${senderId}`, // Link dẫn đến trang profile của người gửi
         });
@@ -261,6 +257,9 @@ export const acceptFriendRequest = async (req, res) => {
     const {userId} = req.body; // ID của người nhận lời mời (từ token hoặc frontend gửi lên)
 
     try {
+        const sender = await User.findById(friendId);
+        const receiver = await User.findById(userId);
+
         const friendRequest = await Friendship.findOne({senderId: friendId, receiverId: userId});
 
         if (!friendRequest) {
@@ -281,6 +280,15 @@ export const acceptFriendRequest = async (req, res) => {
         await User.findByIdAndUpdate(friendRequest.receiverId, {
             $addToSet: {friends: friendRequest.senderId},
         });
+
+        const notification = new Notification({
+            userId: friendId, // Người nhận thông báo
+            message: `${sender.firstName} ${sender.lastName} accept your friend request.`,
+            type: "follow",
+            link: `/profile/${friendId}`,
+        });
+
+        await notification.save();
 
         return res.status(200).json({message: "Friend request accepted successfully"});
     } catch (error) {

@@ -19,7 +19,7 @@ const router = express.Router();
 //--------------READ---------------
 router.get("/search", verifyToken, searchUser);
 
-router.get("/:id", verifyToken, getUser);
+router.get("/:userId", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
 router.get('/:userId/received-friend-requests', verifyToken, getReceivedFriendRequests);
 router.get('/:userId/sent-friend-requests', verifyToken, getSentFriendRequests);

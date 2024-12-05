@@ -51,6 +51,11 @@ const UserSchema = new mongoose.Schema(
         },
         location: String,
         occupation: String,
+        privacySettings: {
+            email: { type: Boolean, default: false }, // false is private, true is public
+            location: { type: Boolean, default: false },
+            occupation: { type: Boolean, default: false },
+        },
     },
     {
         timestamps: true

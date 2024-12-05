@@ -3,15 +3,55 @@ import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
 
 //----------------READ--------------
+// export const getUser = async (req, res) => {
+//     try {
+//         const {id} = req.params;
+//         const user = await User.findById(id);
+//
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+//
+//         res.status(200).json(user);
+//     } catch (err) {
+//         res.status(404).json({message: err.message});
+//     }
+// }
+
 export const getUser = async (req, res) => {
+    const {userId} = req.params;
+    const viewerId = req.user.id;  // my id
+
     try {
-        const {id} = req.params;
-        const user = await User.findById(id);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(404).json({message: err.message});
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        if (userId === viewerId) {
+            res.status(200).json(user);
+        } else {
+            const userInfo = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                picturePath: user.picturePath,
+                friends: user.friends,
+                email: user.privacySettings.email ? user.email : 'Private',
+                location: user.privacySettings.location ? user.location : 'Private',
+                occupation: user.privacySettings.occupation ? user.occupation : 'Private',
+            };
+
+            return res.status(200).json(userInfo);
+        }
+
+
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        return res.status(500).json({message: 'Could not fetch user information'});
     }
-}
+};
+
 
 export const getUserFriends = async (req, res) => {
     try {
@@ -338,17 +378,51 @@ export const updateInfoUser = async (req, res) => {
     const {location, occupation} = req.body;
     try {
 
-        const updatedUser = await User.findByIdAndUpdate(userId, { location, occupation }, {new: true});
+        const updatedUser = await User.findByIdAndUpdate(userId, {location, occupation}, {new: true});
 
         if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
 
         return res.status(200).json(updatedUser);
     } catch (error) {
         console.error('Error update user:', error);
-        return res.status(500).json({ message: 'Could not update user information' });
+        return res.status(500).json({message: 'Could not update user information'});
     }
 };
+
+export const updatePrivacySettings = async (req, res) => {
+    const {userId} = req.params;
+    const {emailPrivacy, locationPrivacy, occupationPrivacy} = req.body;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        if (emailPrivacy !== undefined) {
+            user.privacySettings.email = emailPrivacy;
+        }
+
+        if (locationPrivacy !== undefined) {
+            user.privacySettings.location = locationPrivacy;
+        }
+
+        if (occupationPrivacy !== undefined) {
+            user.privacySettings.occupation = occupationPrivacy;
+        }
+
+        await user.save();
+
+        return res.status(200).json({message: 'Privacy settings updated successfully'});
+    } catch (error) {
+        console.error('Error updating privacy settings:', error);
+        return res.status(500).json({message: 'Could not update privacy settings'});
+    }
+};
+
+
 
 

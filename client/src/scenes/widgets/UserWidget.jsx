@@ -2,9 +2,19 @@ import {
     ManageAccountsOutlined,
     EditOutlined,
     LocationOnOutlined,
-    WorkOutlineOutlined, MailLockOutlined, Mail, MailOutlined,
+    WorkOutlineOutlined, MailLockOutlined, Mail, MailOutlined, AddCircleOutlineOutlined,
 } from "@mui/icons-material";
-import {Box, Typography, Divider, useTheme, Button, TextField, FormControlLabel, Switch} from "@mui/material";
+import {
+    Box,
+    Typography,
+    Divider,
+    useTheme,
+    Button,
+    TextField,
+    FormControlLabel,
+    Switch,
+    DialogActions, Dialog, DialogTitle, DialogContent
+} from "@mui/material";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 import WidgetWrapper from "../../components/WidgetWrapper";
@@ -12,6 +22,7 @@ import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import logo from '../../assets/ute.jpg';
+import GroupList from "./GroupList.jsx";
 
 const UserWidget = ({userId, picturePath}) => {
     const [user, setUser] = useState(null);
@@ -21,6 +32,13 @@ const UserWidget = ({userId, picturePath}) => {
         locationPrivacy: false,
         occupationPrivacy: false,
     });
+    const [openAddGroup, setOpenAddGroup] = useState(false);
+    const [groupData, setGroupData] = useState({
+        name: "",
+        description: "",
+        isPublic: true,
+    });
+
     const {palette} = useTheme();
     const navigate = useNavigate();
     const token = useSelector((state) => state.token);
@@ -49,7 +67,7 @@ const UserWidget = ({userId, picturePath}) => {
     };
 
     const updateUser = async () => {
-        const response = await fetch(`http://localhost:3001/users/${userId}/editInfo`, {
+        const response = await fetch(`http://localhost:3001/users/${currentUserId}/editInfo`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -61,6 +79,23 @@ const UserWidget = ({userId, picturePath}) => {
             const updatedData = await response.json();
             setUser(updatedData);
             setIsEditing(false);
+        }
+    };
+
+    const handleAddGroup = async () => {
+        const response = await fetch(`http://localhost:3001/group/${userId}/add-group`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(groupData),
+        });
+        if (response.ok) {
+            // Handle successful group creation
+            setOpenAddGroup(false);
+            setGroupData({ name: "", description: "", isPublic: true });
+            alert("Group added successfully!");
         }
     };
 
@@ -202,15 +237,25 @@ const UserWidget = ({userId, picturePath}) => {
 
             <Divider/>
 
-            {/* FOURTH ROW */}
             <Box p="1rem 0">
                 <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
                     My Group
                 </Typography>
 
+                <FlexBetween mb="1rem">
+                    <Typography color={main}>Groups List</Typography>
+                    <Button
+                        variant="outlined"
+                        startIcon={<AddCircleOutlineOutlined />}
+                        onClick={() => setOpenAddGroup(true)}
+                    >
+                        Add Group
+                    </Button>
+                </FlexBetween>
+
                 <FlexBetween gap="1rem" mb="0.5rem">
                     <FlexBetween gap="1rem">
-                        <img src={logo} alt="ute" style={{width: '25px', height: '25px'}}/>
+                        <img src={logo} alt="ute" style={{ width: "25px", height: "25px" }} />
                         <Box>
                             <Typography color={main} fontWeight="500">
                                 UTE
@@ -218,22 +263,55 @@ const UserWidget = ({userId, picturePath}) => {
                             <Typography color={medium}>01 Vo Van Ngan</Typography>
                         </Box>
                     </FlexBetween>
-                    <EditOutlined sx={{color: main}}/>
-                </FlexBetween>
-
-                <FlexBetween gap="1rem">
-                    <FlexBetween gap="1rem">
-                        <img src={logo} alt="ute" style={{width: '25px', height: '25px'}}/>
-                        <Box>
-                            <Typography color={main} fontWeight="500">
-                                HCM
-                            </Typography>
-                            <Typography color={medium}>HCMUTE</Typography>
-                        </Box>
-                    </FlexBetween>
-                    <EditOutlined sx={{color: main}}/>
                 </FlexBetween>
             </Box>
+
+            {/* ADD GROUP DIALOG */}
+            <Dialog open={openAddGroup} onClose={() => setOpenAddGroup(false)}>
+                <DialogTitle>Add New Group</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        fullWidth
+                        label="Group Name"
+                        variant="outlined"
+                        margin="dense"
+                        value={groupData.name}
+                        onChange={(e) => setGroupData({ ...groupData, name: e.target.value })}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Description"
+                        variant="outlined"
+                        margin="dense"
+                        value={groupData.description}
+                        onChange={(e) =>
+                            setGroupData({ ...groupData, description: e.target.value })
+                        }
+                    />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={groupData.isPublic}
+                                onChange={(e) =>
+                                    setGroupData({ ...groupData, isPublic: e.target.checked })
+                                }
+                            />
+                        }
+                        label="Public Group"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenAddGroup(false)}>Cancel</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddGroup}
+                    >
+                        Add
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <GroupList />
         </WidgetWrapper>
     );
 };

@@ -2,7 +2,7 @@ import express from "express";
 import {
     getUser,
     getUserFriends,
-    searchUser,
+    // searchUser,
     sendFriendRequest,
     getReceivedFriendRequests,
     getSentFriendRequests,
@@ -17,7 +17,7 @@ import {verifyToken} from "../middleware/auth.js";
 const router = express.Router();
 
 //--------------READ---------------
-router.get("/search", verifyToken, searchUser);
+// router.get("/search", verifyToken, searchUser);
 
 router.get("/:userId", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);

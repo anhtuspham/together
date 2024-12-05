@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
+// import Group from "../models/Group.js";
 
 //----------------READ--------------
 // export const getUser = async (req, res) => {
@@ -110,52 +111,82 @@ export const getFriendStatus = async (req, res) => {
     }
 };
 
+// export const searchUser = async (req, res) => {
+//     const { username, groupname } = req.query;
+//     try {
+//         let users = [];
+//         let groups = [];
+//
+//         // Nếu có tham số username, tìm người dùng
+//         if (username) {
+//             users = await User.find({
+//                 $or: [
+//                     { firstName: { $regex: username, $options: "i" } },
+//                     { lastName: { $regex: username, $options: "i" } },
+//                 ],
+//             }).select("_id firstName lastName occupation picturePath");
+//         }
+//
+//         // Nếu có tham số groupname, tìm nhóm
+//         if (groupname) {
+//             groups = await Group.find({
+//                 name: { $regex: groupname, $options: "i" },
+//             }).select("_id name description picturePath");
+//         }
+//
+//         res.status(200).json({ users, groups });
+//     } catch (error) {
+//         console.error("Error during search:", error);
+//         res.status(500).json({ message: "Search failed" });
+//     }
+// }
 
-export const searchUser = async (req, res) => {
-    try {
-        const {username} = req.query;
 
-        if (!username) {
-            return res.json({users: []});
-        }
-
-        // Split the query into first name and last name based on whitespace
-        const [firstName, lastName] = username.split(" ");
-
-        // Create an array to hold the search conditions
-        const searchConditions = [];
-
-        // Add search conditions for first name and last name
-        if (firstName && lastName) {
-            // If both first name and last name are provided, search for exact match
-            searchConditions.push({
-                $or: [
-                    {firstName: {$regex: firstName, $options: "i"}},
-                    {lastName: {$regex: lastName, $options: "i"}},
-                ],
-            });
-        } else {
-            // If only one name is provided, search for partial match in both first name and last name
-            searchConditions.push({
-                $or: [
-                    {firstName: {$regex: username, $options: "i"}},
-                    {lastName: {$regex: username, $options: "i"}},
-                ],
-            });
-        }
-
-        // Use the User.find method to query the database with the combined search conditions
-        const users = await User.find({
-            $and: searchConditions,
-        })
-            .limit(10)
-            .select("firstName lastName email picturePath");
-
-        res.json({users});
-    } catch (err) {
-        return res.status(500).json({msg: err.message});
-    }
-};
+// export const searchUser = async (req, res) => {
+//     try {
+//         const {username} = req.query;
+//
+//         if (!username) {
+//             return res.json({users: []});
+//         }
+//
+//         // Split the query into first name and last name based on whitespace
+//         const [firstName, lastName] = username.split(" ");
+//
+//         // Create an array to hold the search conditions
+//         const searchConditions = [];
+//
+//         // Add search conditions for first name and last name
+//         if (firstName && lastName) {
+//             // If both first name and last name are provided, search for exact match
+//             searchConditions.push({
+//                 $or: [
+//                     {firstName: {$regex: firstName, $options: "i"}},
+//                     {lastName: {$regex: lastName, $options: "i"}},
+//                 ],
+//             });
+//         } else {
+//             // If only one name is provided, search for partial match in both first name and last name
+//             searchConditions.push({
+//                 $or: [
+//                     {firstName: {$regex: username, $options: "i"}},
+//                     {lastName: {$regex: username, $options: "i"}},
+//                 ],
+//             });
+//         }
+//
+//         // Use the User.find method to query the database with the combined search conditions
+//         const users = await User.find({
+//             $and: searchConditions,
+//         })
+//             .limit(10)
+//             .select("firstName lastName email picturePath");
+//
+//         res.json({users});
+//     } catch (err) {
+//         return res.status(500).json({msg: err.message});
+//     }
+// };
 
 
 //------------------UPDATE--------------------------------

@@ -1,12 +1,27 @@
 import express from "express";
-import {acceptJoinGroup, addGroup, joinGroup, leaveGroup, rejectJoinGroup} from "../controllers/group.js";
+import {
+    acceptJoinGroup,
+    addGroup,
+    getGroup,
+    getGroupStatus, getRequest,
+    joinGroup,
+    leaveGroup,
+    rejectJoinGroup
+} from "../controllers/group.js";
+import {verifyToken} from "../middleware/auth.js";
+import {searchUser} from "../controllers/group.js";
 
 const router = express.Router();
+router.get("/search", verifyToken, searchUser);
+router.get("/:groupId/:userId/status", verifyToken, getGroupStatus);
+router.get("/:groupId/:userId/get-request", verifyToken, getRequest);
 
-router.get("/addGroup", addGroup);
-router.post("/:groupId/join", joinGroup);
+router.get("/get-group", getGroup);
+router.post("/:userId/add-group", addGroup);
+router.post("/:groupId/:userId/join", joinGroup);
 router.post("/:groupId/leave", leaveGroup);
-router.post("/:groupId/requests/:userId/accept", acceptJoinGroup);
-router.post("/:groupId/requests/:userId/reject", rejectJoinGroup);
+router.post("/:groupId/requests/:userId/:adminId/accept", acceptJoinGroup);
+router.post("/:groupId/requests/:userId/:adminId/reject", rejectJoinGroup);
+
 export default router;
 

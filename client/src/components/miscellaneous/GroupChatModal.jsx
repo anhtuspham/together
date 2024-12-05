@@ -142,13 +142,13 @@ const GroupChatModal = ({ children }) => {
                 label="Chat Name"
                 // onBlur={handleBlur}
                 onChange={(e) => setGroupChatName(e.target.value)}
-                helperText="Give Your Group Chat a Name"
+                helpertext="Give Your Group Chat a Name"
                 sx={{ gridColumn: "span 4", margin: "15px"}}
                 />
 
             </Box>
             <Divider sx={{mb: "15px"}} />
-            <ChatSearchBar helperText="Search Users for Chat" onClickAction="handleGroup" handleGroup={handleGroup}/>
+            <ChatSearchBar helpertext="Search Users for Chat" onClickAction="handleGroup" handleGroup={handleGroup}/>
             <Box  mt="10px" w="100%" d="flex" flexWrap="wrap">
               {/* {console.log(selectedUsers)}  */}
               {selectedUsers.map((u) => (

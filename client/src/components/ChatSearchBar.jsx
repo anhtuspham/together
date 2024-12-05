@@ -6,7 +6,7 @@ import {  useSelector } from "react-redux";
 import FlexBetween from "../components/FlexBetween";
 import UserListItem from './UserListItem';
 
-const ChatSearchBar = ({helperText, onClickAction, handleGroup, handleAddUser}) => {
+const ChatSearchBar = ({helpertext, onClickAction, handleGroup, handleAddUser}) => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -68,7 +68,7 @@ const ChatSearchBar = ({helperText, onClickAction, handleGroup, handleAddUser}) 
             <InputBase
                 name="search"
                 id="search"
-                placeholder={helperText}
+                placeholder={helpertext}
                 value={searchQuery}
                 onChange={handleSearchInputChange}
 

@@ -42,7 +42,7 @@ const ChatList = ({fetchAgain, setFetchAgain}) => {
         />
       {/* </List> */}
       <Box  sx={{mt: "15px"}}/>
-      <ChatSearchBar helperText="Search Users For Chat" onClickAction="accessChat" />
+      <ChatSearchBar helpertext="Search Users For Chat" onClickAction="accessChat" />
       <UserChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
     </Paper>
   );

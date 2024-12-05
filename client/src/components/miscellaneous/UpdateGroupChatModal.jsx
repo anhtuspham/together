@@ -236,7 +236,7 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
             </Box>
             <Divider sx={{mb: "15px"}}/>
             <ChatSearchBar 
-              helperText="Add Users To Group" 
+              helpertext="Add Users To Group" 
               onClickAction="handleAddUser" 
               handleAddUser={handleAddUser}
             />

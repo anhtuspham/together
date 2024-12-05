@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema(
                 groupId: {type: mongoose.Types.ObjectId, ref: "Group"},
             }
         ],
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
         location: String,
         occupation: String,
     },

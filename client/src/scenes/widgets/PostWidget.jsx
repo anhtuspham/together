@@ -9,7 +9,7 @@ import {
     FavoriteOutlined,
     ShareOutlined,
     BookmarkBorder,
-    BookmarkOutlined,
+    BookmarkOutlined, ReportOutlined,
 } from '@mui/icons-material';
 import {Box, Divider, IconButton, Typography, useTheme, Button, TextField} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -193,6 +193,23 @@ const PostWidget = ({
         navigator.clipboard.writeText(postUrl);
     };
 
+    const handleReportPost = async () => {
+        try {
+
+            const response = await fetch(`${port}/posts/${postId}/report`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log('comehere: ')
+            dispatch(setPost({ post: response.data }));
+        } catch (error) {
+            console.error("Failed to report post", error);
+        }
+    };
+
     return (
         <WidgetWrapper m="2rem 0">
             <FlexBetween>
@@ -306,8 +323,8 @@ const PostWidget = ({
                     }
                 </FlexBetween>
 
-                <IconButton onClick={handleShare}>
-                    <ShareOutlined/>
+                <IconButton onClick={handleReportPost}>
+                    <ReportOutlined/>
                 </IconButton>
             </FlexBetween>
             {/* Displaying the comments */}

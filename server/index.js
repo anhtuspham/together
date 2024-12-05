@@ -23,7 +23,7 @@ import { Server } from "socket.io";
 import {getSentFriendRequests} from "./controllers/users.js";
 // import User from "./models/User.js";
 // import Post from "./models/Post.js";
-// import {users, posts} from "./data/index.js";
+// import {users, posts} from "./data/index.jsx";
 
 // ------------CONFIGURATIONS (Includes all middleware and diff pckg config)-------
 //Allows you to grab file urls from type modules

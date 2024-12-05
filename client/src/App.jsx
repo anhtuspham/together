@@ -11,6 +11,8 @@ import {CssBaseline, ThemeProvider} from "@mui/material";
 import {createTheme} from "@mui/material/styles";
 import {themeSettings} from "./theme";
 import {setLogout} from "./state/index.js";
+import Admin from "./scenes/admin/index.jsx";
+import AdminPage from "./scenes/admin/index.jsx";
 
 
 function App() {
@@ -57,6 +59,10 @@ function App() {
                         <Route
                             path='/saved/:userId'
                             element={isAuth ? <SavedPage/> : <Navigate to='/'/>}
+                        />
+                        <Route
+                            path='/admin'
+                            element={isAuth ? <AdminPage/> : <Navigate to='/'/>}
                         />
                     </Routes>
                 </ThemeProvider>

@@ -214,3 +214,53 @@ export const updateComment = async (req, res) => {
         res.status(500).json({message: "Failed to update comment", error: error.message});
     }
 };
+
+
+export const reportPost = async (req, res) => {
+    const { postId } = req.params;
+
+    console.log('postId', postId)
+
+    try {
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found!" });
+        }
+
+        if (post.isReported) {
+            return res.status(400).json({ message: "This post has already been reported." });
+        }
+
+        post.isReported = true;
+
+        await post.save();
+
+        return res.status(200).json({ message: "Post has been reported successfully!", post });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}
+
+
+export const getAllPost = async (req, res) => {
+    try {
+        const posts = await Post.find()
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        res.status(500).json({ message: "Failed to fetch posts" });
+    }
+}
+
+export const deleteOnePost = async (req, res) => {
+    const { postId } = req.params;
+    try {
+        await Post.findByIdAndDelete(postId);
+        res.status(200).json({ message: "Post deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting post:", error);
+        res.status(500).json({ message: "Failed to delete post" });
+    }
+}

@@ -160,8 +160,6 @@ export const addComment = async (req, res) => {
         const { postId } = req.params;
         const { userId, content } = req.body;
 
-        console.log('userId, content, postId', userId, content, postId)
-
         const newComment = await Comment.create({ userId, postId, content });
 
         // Populate user data
@@ -193,5 +191,26 @@ export const getComments = async (req, res) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({error: "Server error"});
+    }
+};
+
+export const updateComment = async (req, res) => {
+    try {
+        const {commentId} = req.params;
+        const updatedData = req.body;
+
+        const updatedComment = await Comment.findByIdAndUpdate(
+            commentId,
+            {$set: updatedData},
+            {new: true}
+        );
+
+        if (!updatedComment) {
+            return res.status(404).json({message: "Comment not found"});
+        }
+
+        res.status(200).json(updatedComment);
+    } catch (error) {
+        res.status(500).json({message: "Failed to update comment", error: error.message});
     }
 };

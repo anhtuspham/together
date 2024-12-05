@@ -9,7 +9,7 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
-    getFriendStatus, updateInfoUser
+    getFriendStatus, updateInfoUser, updatePrivacySettings
 } from "../controllers/users.js";
 import {verifyToken} from "../middleware/auth.js";
 
@@ -32,6 +32,6 @@ router.post("/add-friend", verifyToken, sendFriendRequest)
 
 router.post("/:friendId/accept-friend", verifyToken, acceptFriendRequest);
 router.post("/:friendId/reject-friend", verifyToken, rejectFriendRequest);
-router.post('/:userId/editInfo', verifyToken, updateInfoUser);
+router.post('/:userId/editInfo', verifyToken, updatePrivacySettings);
 
 export default router;

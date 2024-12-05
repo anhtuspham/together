@@ -4,7 +4,7 @@ import {
     LocationOnOutlined,
     WorkOutlineOutlined, MailLockOutlined, Mail, MailOutlined,
 } from "@mui/icons-material";
-import {Box, Typography, Divider, useTheme, Button, TextField} from "@mui/material";
+import {Box, Typography, Divider, useTheme, Button, TextField, FormControlLabel, Switch} from "@mui/material";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 import WidgetWrapper from "../../components/WidgetWrapper";
@@ -16,7 +16,11 @@ import logo from '../../assets/ute.jpg';
 const UserWidget = ({userId, picturePath}) => {
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({
+        emailPrivacy: false,
+        locationPrivacy: false,
+        occupationPrivacy: false,
+    });
     const {palette} = useTheme();
     const navigate = useNavigate();
     const token = useSelector((state) => state.token);
@@ -38,6 +42,9 @@ const UserWidget = ({userId, picturePath}) => {
             email: data.email || "",
             location: data.location || "",
             occupation: data.occupation || "",
+            emailPrivacy: data.privacySettings.email || false,
+            locationPrivacy: data.privacySettings.location || false,
+            occupationPrivacy: data.privacySettings.occupation || false,
         });
     };
 
@@ -129,6 +136,10 @@ const UserWidget = ({userId, picturePath}) => {
                             value={formData.location}
                             onChange={(e) => setFormData({...formData, location: e.target.value})}
                         />
+                        <FormControlLabel
+                            control={<Switch checked={formData.locationPrivacy} onChange={() => setFormData({...formData, locationPrivacy: !formData.locationPrivacy})} />}
+                            label="Share location"
+                        />
                     </Box>
                     <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
                         <WorkOutlineOutlined fontSize="large" sx={{color: main}}/>
@@ -140,6 +151,10 @@ const UserWidget = ({userId, picturePath}) => {
                             value={formData.occupation}
                             onChange={(e) => setFormData({...formData, occupation: e.target.value})}
                         />
+                        <FormControlLabel
+                            control={<Switch checked={formData.occupationPrivacy} onChange={() => setFormData({...formData, occupationPrivacy: !formData.occupationPrivacy})} />}
+                            label="Share occupation"
+                        />
                     </Box>
                     <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
                         <MailOutlined fontSize="large" sx={{color: main}}/>
@@ -147,10 +162,14 @@ const UserWidget = ({userId, picturePath}) => {
                             label="Email"
                             variant="outlined"
                             placeholder="@gmail.com"
-                            disabled="true"
                             fullWidth
                             value={formData.email}
                             // onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            disabled={true}
+                        />
+                        <FormControlLabel
+                            control={<Switch checked={formData.emailPrivacy} onChange={() => setFormData({...formData, emailPrivacy: !formData.emailPrivacy})} />}
+                            label="Share email"
                         />
                     </Box>
                     <Button

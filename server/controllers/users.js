@@ -393,7 +393,7 @@ export const updateInfoUser = async (req, res) => {
 
 export const updatePrivacySettings = async (req, res) => {
     const {userId} = req.params;
-    const {emailPrivacy, locationPrivacy, occupationPrivacy} = req.body;
+    const {location, occupation, emailPrivacy, locationPrivacy, occupationPrivacy} = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -401,6 +401,9 @@ export const updatePrivacySettings = async (req, res) => {
         if (!user) {
             return res.status(404).json({message: 'User not found'});
         }
+
+        user.location = location;
+        user.occupation = occupation;
 
         if (emailPrivacy !== undefined) {
             user.privacySettings.email = emailPrivacy;
@@ -416,10 +419,10 @@ export const updatePrivacySettings = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({message: 'Privacy settings updated successfully'});
+        return res.status(200).json(user);
     } catch (error) {
-        console.error('Error updating privacy settings:', error);
-        return res.status(500).json({message: 'Could not update privacy settings'});
+        console.error('Error updating settings:', error);
+        return res.status(500).json({message: 'Could not update settings'});
     }
 };
 

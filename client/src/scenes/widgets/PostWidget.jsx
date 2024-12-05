@@ -152,6 +152,38 @@ const PostWidget = ({
         }
     };
 
+    const handleUpdateComment = async (commentId) => {
+        if(!newComment.trim()){
+            return;
+        }
+        try {
+            const response = await fetch(`${port}/posts/${commentId}/edit-comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    content: newComment,
+                }),
+            });
+
+            if(!response.ok){
+                throw new Error('Failed to update comment');
+            }
+            const updatedData = await response.json();
+            setLoadComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId ? { ...comment, content: newComment } : comment
+                )
+            );
+            setIsEditMode(false); // Đóng chế độ sửa
+            setNewComment(''); // Reset gi
+        } catch (error) {
+            console.error("Failed to update post", error);
+        }
+    };
+
     const addComment = () => {
         postComment();
     };
@@ -217,13 +249,13 @@ const PostWidget = ({
                             color="primary"
                             onClick={handleUpdatePost}
                         >
-                            Lưu
+                            Save
                         </Button>
                         <Button
                             variant="outlined"
                             onClick={() => setIsEditMode(false)}
                         >
-                            Hủy
+                            Cancel
                         </Button>
                     </FlexBetween>
                 </Box>
@@ -301,6 +333,8 @@ const PostWidget = ({
                             return null;
                         }
 
+                        const isCommentOwner = comment.userId._id === loggedInUserId; // Check if the comment belongs to the logged-in user
+
                         return (
                             <Box key={comment._id} display="flex" alignItems="center" mb="0.5rem">
                                 <img
@@ -312,9 +346,52 @@ const PostWidget = ({
                                     <Typography sx={{ color: main, fontWeight: "bold" }}>
                                         {comment.userId.firstName || 'Unknown'} {comment.userId.lastName || ''}
                                     </Typography>
-                                    <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
-                                        {comment.content}
-                                    </Typography>
+                                    {isEditMode === comment._id ? (
+                                        <Box display="flex" alignItems="center">
+                                            <TextField
+                                                required={true}
+                                                value={newComment} // Set the new comment value
+                                                onChange={(e) => setNewComment(e.target.value)} // Update the value
+                                                variant="outlined"
+                                                size="small"
+                                                sx={{ width: '70%' }}
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                onClick={() => handleUpdateComment(comment._id)} // Update comment when clicked
+                                                sx={{ ml: 1 }}
+                                            >
+                                                Save
+                                            </Button>
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={() => setIsEditMode(false)} // Exit edit mode
+                                                sx={{ ml: 1 }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </Box>
+                                    ) : (
+                                        <Box>
+                                            <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
+                                                {comment.content}
+                                            </Typography>
+                                            {isCommentOwner && (
+                                                <Button
+                                                    variant="text"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        setIsEditMode(comment._id);
+                                                        setNewComment(comment.content); // Set the current comment as value
+                                                    }}
+                                                >
+                                                    Edit
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    )}
                                 </Box>
                             </Box>
                         );

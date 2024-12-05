@@ -9,7 +9,7 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
-    getFriendStatus
+    getFriendStatus, updateInfoUser
 } from "../controllers/users.js";
 import {verifyToken} from "../middleware/auth.js";
 
@@ -18,9 +18,7 @@ const router = express.Router();
 
 //--------------READ---------------
 router.get("/search", verifyToken, searchUser);
-//This is basically making a get call to the browser for a specific user id
-//We verify the user's JWT token to see if they are logged in
-//Then we call getUser that will display info of the user they are trying to access
+
 router.get("/:id", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
 router.get('/:userId/received-friend-requests', verifyToken, getReceivedFriendRequests);
@@ -28,12 +26,12 @@ router.get('/:userId/sent-friend-requests', verifyToken, getSentFriendRequests);
 router.get('/:userId/:friendId/friend-status', verifyToken, getFriendStatus)
 
 //-----------------UPDATE------------
-//.patch allows you to update database
+
 router.patch("/:userId/:friendId", verifyToken, removeFriend);
 router.post("/add-friend", verifyToken, sendFriendRequest)
 
 router.post("/:friendId/accept-friend", verifyToken, acceptFriendRequest);
 router.post("/:friendId/reject-friend", verifyToken, rejectFriendRequest);
-// router.patch('/:id', verifyToken, updateUser);
+router.post('/:userId/editInfo', verifyToken, updateInfoUser);
 
 export default router;

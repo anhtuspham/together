@@ -1,10 +1,10 @@
 import {
-    ManageAccountsOutlined,
-    EditOutlined,
-    LocationOnOutlined,
-    WorkOutlineOutlined,
-  } from "@mui/icons-material";
-  import { Box, Typography, Divider, useTheme } from "@mui/material";
+  ManageAccountsOutlined,
+  EditOutlined,
+  LocationOnOutlined,
+  WorkOutlineOutlined, MailLockOutlined, Mail, MailOutlined,
+} from "@mui/icons-material";
+  import {Box, Typography, Divider, useTheme, Button, TextField} from "@mui/material";
   import UserImage from "../../components/UserImage";
   import FlexBetween from "../../components/FlexBetween";
   import WidgetWrapper from "../../components/WidgetWrapper";
@@ -12,9 +12,11 @@ import {
   import { useEffect, useState } from "react";
   import { useNavigate } from "react-router-dom";
   import logo from '../../assets/ute.jpg';
-  
+
   const UserWidget = ({ userId, picturePath }) => {
     const [user, setUser] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState({});
     const { palette } = useTheme();
     const navigate = useNavigate();
     const token = useSelector((state) => state.token);
@@ -22,7 +24,7 @@ import {
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
-  
+
     const getUser = async () => {
       const response = await fetch(`http://localhost:3001/users/${userId}`, {
         method: "GET",
@@ -30,26 +32,48 @@ import {
       });
       const data = await response.json();
       setUser(data);
+
+      setFormData({
+        email: data.email || "",
+        location: data.location || "",
+        occupation: data.occupation || "",
+      });
     };
-  
-    //on arriving on page, getUser will be called and this component is rendered
+
+    const updateUser = async () => {
+      const response = await fetch(`http://localhost:3001/users/${userId}/editInfo`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        const updatedData = await response.json();
+        setUser(updatedData);
+        setIsEditing(false);
+      }
+    };
+
     useEffect(() => {
       getUser();
     }, [currFriends]); // eslint-disable-line react-hooks/exhaustive-deps
-  
+
     //Can put a loading component here
     if (!user) {
       return null;
     }
-  
+
     const {
       firstName,
       lastName,
       location,
       occupation,
       friends,
+        email,
     } = user;
-  
+
     return (
       <WidgetWrapper>
         {/* FIRST ROW */}
@@ -77,33 +101,91 @@ import {
               <Typography color={medium}>{friends.length} friends</Typography>
             </Box>
           </FlexBetween>
-          <ManageAccountsOutlined />
+          <Button
+              startIcon={<ManageAccountsOutlined />}
+              onClick={() => setIsEditing(!isEditing)}
+              variant="contained"
+              color="primary"
+          >
+            {isEditing ? "Cancel" : "Edit Profile"}
+          </Button>
         </FlexBetween>
-  
+
         <Divider />
-  
+
         {/* SECOND ROW */}
-        <Box p="1rem 0">
-          <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
-            <LocationOnOutlined fontSize="large" sx={{ color: main }} />
-            <Typography color={medium}>{location}</Typography>
-          </Box>
-          <Box display="flex" alignItems="center" gap="1rem">
-            <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
-            <Typography color={medium}>{occupation}</Typography>
-          </Box>
-        </Box>
-  
+        {isEditing ? (
+            <Box p="1rem 0">
+              <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
+                <LocationOnOutlined fontSize="large" sx={{ color: main }} />
+                <TextField
+                    label="Location"
+                    variant="outlined"
+                    placeholder="Langa"
+                    fullWidth
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                />
+              </Box>
+              <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
+                <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
+                <TextField
+                    label="Occupation"
+                    variant="outlined"
+                    placeholder="Engineer"
+                    fullWidth
+                    value={formData.occupation}
+                    onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                />
+              </Box>
+              <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
+                <MailOutlined fontSize="large" sx={{ color: main }} />
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    placeholder="@gmail.com"
+                    disabled="true"
+                    fullWidth
+                    value={formData.email}
+                    // onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </Box>
+              <Button
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                  onClick={updateUser}
+              >
+                Save Changes
+              </Button>
+            </Box>
+        ) : (
+            <Box p="1rem 0">
+              <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
+                <LocationOnOutlined fontSize="large" sx={{ color: main }} />
+                <Typography color={medium}>{location}</Typography>
+              </Box>
+              <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
+                <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
+                <Typography color={medium}>{occupation}</Typography>
+              </Box>
+              <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
+                <MailOutlined fontSize="large" sx={{ color: main }} />
+                <Typography color={medium}>{email}</Typography>
+              </Box>
+            </Box>
+        )}
+
         <Divider />
-  
+
         <Divider />
-  
+
         {/* FOURTH ROW */}
         <Box p="1rem 0">
           <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
             My Group
           </Typography>
-  
+
           <FlexBetween gap="1rem" mb="0.5rem">
             <FlexBetween gap="1rem">
               <img src={logo} alt="ute" style={{width: '25px', height: '25px'}}/>
@@ -116,7 +198,7 @@ import {
             </FlexBetween>
             <EditOutlined sx={{ color: main }} />
           </FlexBetween>
-  
+
           <FlexBetween gap="1rem">
             <FlexBetween gap="1rem">
               <img src={logo} alt="ute" style={{width: '25px', height: '25px'}}/>
@@ -133,5 +215,5 @@ import {
       </WidgetWrapper>
     );
   };
-  
+
   export default UserWidget;

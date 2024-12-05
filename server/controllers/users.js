@@ -315,7 +315,6 @@ export const getSentFriendRequests = async (req, res) => {
         }).populate('receiverId', 'firstName lastName picturePath location'); // Populate thông tin người nhận
 
 
-
         // Trả về danh sách người nhận
         const result = friendRequests.map(request => ({
             _id: request.receiverId._id,
@@ -333,25 +332,23 @@ export const getSentFriendRequests = async (req, res) => {
     }
 };
 
-// export const getSentFriendRequests = async (userId) => {
-//     try {
-//         // Tìm tất cả lời mời kết bạn do user gửi
-//         const friendRequests = await Friendship.find({
-//             senderId: userId,
-//             status: "pending",
-//         }).populate("receiverId", "firstName lastName picturePath location occupation");
-//
-//         // Chuyển đổi dữ liệu lời mời kết bạn
-//         return friendRequests.map((request) => ({
-//             _id: request.receiverId._id,
-//             firstName: request.receiverId.firstName,
-//             lastName: request.receiverId.lastName,
-//             picturePath: request.receiverId.picturePath,
-//             occupation: request.receiverId.occupation,
-//         })); // Trả về dữ liệu đã xử lý
-//     } catch (error) {
-//         console.error("Error fetching sent friend requests:", error);
-//         throw new Error("Could not fetch sent friend requests");
-//     }
-// };
+export const updateInfoUser = async (req, res) => {
+    const {userId} = req.params;
+    console.log('req', req.params)
+    const {location, occupation} = req.body;
+    try {
+
+        const updatedUser = await User.findByIdAndUpdate(userId, { location, occupation }, {new: true});
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error update user:', error);
+        return res.status(500).json({ message: 'Could not update user information' });
+    }
+};
+
 

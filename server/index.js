@@ -95,7 +95,7 @@ const server = app.listen(PORT, () => console.log(`Server Port : ${PORT}`));
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:5173", "http://localhost:3000"],
     // credentials: true,
   },
 });
@@ -137,19 +137,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  // // follow friend status
-  //   socket.on("sendFriendRequest", async (data) => {
-  //       const {senderId, receiverId} = data;
-  //       try{
-  //           const newFriendRequest = await getSentFriendRequests(senderId);
-  //           socket.emit("updateSentFriends", {friendRequest: newFriendRequest})
-  //
-  //       }catch (error) {
-  //           console.error("Error processing friend request:", error.message);
-  //           socket.emit("error", { message: "Failed to process friend request" });
-  //       }
-  //
-  //   })
 
   socket.off("setup", () => {
     console.log("USER DISCONNECTED");

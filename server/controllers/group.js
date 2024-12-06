@@ -2,8 +2,6 @@ import express from "express";
 import Group from "../models/group.js";
 import User from "../models/User.js";
 
-console.log("Group model in grou loaded successfully:", !!Group);
-
 const router = express.Router();
 
 export const getGroup = async (req, res) => {

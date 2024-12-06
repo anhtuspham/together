@@ -39,6 +39,9 @@ const UserWidget = ({userId, picturePath}) => {
         isPublic: true,
     });
 
+    const {_id} = useSelector((state) => state.user);
+    const isSelf = userId === _id;
+
     const {palette} = useTheme();
     const navigate = useNavigate();
     const token = useSelector((state) => state.token);
@@ -237,7 +240,7 @@ const UserWidget = ({userId, picturePath}) => {
 
             <Divider/>
 
-            <Box p="1rem 0">
+            {isSelf ? <Box p="1rem 0">
                 <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
                     My Group
                 </Typography>
@@ -264,7 +267,7 @@ const UserWidget = ({userId, picturePath}) => {
                         </Box>
                     </FlexBetween>
                 </FlexBetween>
-            </Box>
+            </Box> : (<></>)}
 
             {/* ADD GROUP DIALOG */}
             <Dialog open={openAddGroup} onClose={() => setOpenAddGroup(false)}>
@@ -311,7 +314,7 @@ const UserWidget = ({userId, picturePath}) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <GroupList />
+            {isSelf ? <GroupList /> : <></>}
         </WidgetWrapper>
     );
 };

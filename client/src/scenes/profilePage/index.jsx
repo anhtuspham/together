@@ -7,6 +7,7 @@ import FriendListWidget from "../../scenes/widgets/FriendListWidget";
 import MyPostWidget from "../../scenes/widgets/MyPostWidget";
 import PostsWidget from "../../scenes/widgets/PostsWidget";
 import UserWidget from "../../scenes/widgets/UserWidget";
+import RecentActivities from "../widgets/RecentActivities.jsx";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -46,7 +47,7 @@ const ProfilePage = () => {
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={userId} picturePath={user.picturePath} />
           <Box m="2rem 0" />
-          <FriendListWidget userId={userId} />
+          {isSelf ? <FriendListWidget userId={userId} /> : (<></>)}
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
@@ -55,6 +56,9 @@ const ProfilePage = () => {
           {isSelf ? (<MyPostWidget picturePath={user.picturePath} />) : (<></>)}
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile />
+        </Box>
+        <Box>
+          {isSelf ? <RecentActivities/> : (<></>)}
         </Box>
       </Box>
     </Box>

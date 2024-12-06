@@ -1,6 +1,10 @@
 import User from "../models/User.js";
 import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
+import Comment from "../models/Comment.js";
+import Post from "../models/Post.js";
+
+import jwt from "jsonwebtoken";
 
 export const getUser = async (req, res) => {
     const {userId} = req.params;
@@ -366,4 +370,82 @@ export const updatePrivacySettings = async (req, res) => {
     }
 };
 
+
+export const getUserActivity = async (req, res) => {
+    // const { userId } = req.params;
+    // try {
+    //     // Lấy tất cả dữ liệu từ các bảng liên quan
+    //     const comments = await Comment.find({ userId }).populate("postId");
+    //     console.log('comment: ', comments);
+    //     const notifications = await Notification.find({ userId });
+    //     console.log('notifi', notifications);
+    //     const friendships = await Friendship.find({
+    //         $or: [{ senderId: userId }, { receiverId: userId }],
+    //     }).populate("senderId receiverId");
+    //     console.log('friend:', friendships);
+    //     const posts = await Post.find({ userId });
+    //
+    //     console.log('userId: ', userId)
+    //     // Gộp và định dạng dữ liệu
+    //     const activities = [
+    //         ...comments.map((c) => ({
+    //             type: "comment",
+    //             data: c,
+    //         })),
+    //         ...notifications.map((n) => ({
+    //             type: "notification",
+    //             data: n,
+    //         })),
+    //         ...friendships.map((f) => ({
+    //             type: "friendship",
+    //             data: f,
+    //         })),
+    //         ...posts.map((p) => ({
+    //             type: "post",
+    //             data: p,
+    //         })),
+    //     ];
+    //
+    //     // Sắp xếp theo thứ tự thời gian
+    //     activities.sort((a, b) => new Date(b.data.createdAt) - new Date(a.data.createdAt));
+    //
+    //     res.status(200).json(activities);
+    // } catch (error) {
+    //     res.status(500).json({ message: "Error fetching activities", error });
+    // }
+
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        // Decode token để lấy thông tin userId
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        console.log('userId: ', userId)
+
+        // Lấy hoạt động của người dùng
+        const comments = await Comment.find({ userId }).populate("postId");
+        const notifications = await Notification.find({ userId });
+        const friendships = await Friendship.find({
+            $or: [{ senderId: userId }, { receiverId: userId }],
+        }).populate("senderId receiverId");
+        const posts = await Post.find({ userId });
+
+        const activities = [
+            ...comments.map((c) => ({ type: "comment", data: c })),
+            ...notifications.map((n) => ({ type: "notification", data: n })),
+            ...friendships.map((f) => ({ type: "friendship", data: f })),
+            ...posts.map((p) => ({ type: "post", data: p })),
+        ];
+
+        activities.sort((a, b) => new Date(b.data.createdAt) - new Date(a.data.createdAt));
+
+        res.status(200).json(activities);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching activities", error });
+    }
+}
 

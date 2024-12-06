@@ -18,7 +18,7 @@ const AdminPage = () => {
     // Fetch all users
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://localhost:3001/users/admin/all-user", {
+            const response = await fetch("http://localhost:3001/admin/all-user", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await response.json();
@@ -31,7 +31,7 @@ const AdminPage = () => {
     // Fetch all posts
     const fetchPosts = async () => {
         try {
-            const response = await fetch("http://localhost:3001/posts/admin/all-post", {
+            const response = await fetch("http://localhost:3001/admin/all-post", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await response.json();
@@ -43,7 +43,7 @@ const AdminPage = () => {
 
     const fetchGroups = async () => {
         try {
-            const response = await fetch("http://localhost:3001/group/admin/all-group", {
+            const response = await fetch("http://localhost:3001/admin/all-group", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await response.json();
@@ -56,7 +56,7 @@ const AdminPage = () => {
     // Delete a user
     const deleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:3001/users/admin/delete/${userId}`, {
+            const response = await fetch(`http://localhost:3001/admin/delete/${userId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -71,7 +71,7 @@ const AdminPage = () => {
     // Delete a post
     const deletePost = async (postId) => {
         try {
-            const response = await fetch(`http://localhost:3001/posts/admin/delete/${postId}`, {
+            const response = await fetch(`http://localhost:3001/admin/delete/${postId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -85,7 +85,7 @@ const AdminPage = () => {
 
     const deleteGroup = async (groupId) => {
         try {
-            const response = await fetch(`http://localhost:3001/group/admin/delete/${groupId}`, {
+            const response = await fetch(`http://localhost:3001/admin/delete/${groupId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

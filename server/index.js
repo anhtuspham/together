@@ -16,17 +16,14 @@ import savedRoutes from './routes/saved.js';
 import messageRoutes from "./routes/message.js";
 import notificationRoutes from './routes/notification.js';
 import groupRoutes from './routes/group.js';
+import adminRoutes from './routes/admin.js';
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from './middleware/auth.js';
 import { Server } from "socket.io";
-import {getSentFriendRequests} from "./controllers/users.js";
-// import User from "./models/User.js";
-// import Post from "./models/Post.js";
-// import {users, posts} from "./data/index.jsx";
+
 
 // ------------CONFIGURATIONS (Includes all middleware and diff pckg config)-------
-//Allows you to grab file urls from type modules
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);         
 //To use dotenv files
@@ -45,7 +42,6 @@ app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 
 //-----------------------File Storage----------------------------
-//Using multer to save files uploaded onto our website locally
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, 'public/assets');
@@ -74,6 +70,9 @@ app.use('/saved', savedRoutes);
 app.use('/notification', notificationRoutes);
 app.use('/group', groupRoutes);
 
+// admin
+app.use('/admin', adminRoutes)
+
 
 
 //----------------------Mongoose Setup---------------------------------
@@ -83,11 +82,6 @@ mongoose.connect(process.env.MONGO_URL, {
     useUnifiedTopology: true,
 }).then(() => {
     console.log('Connected to MongoDB');
-
-    //ONLY ONE TIME
-    //Loading up fake Users and Posts from data file 
-    // User.insertMany(users);
-    //Post.insertMany(posts);
 
 }).catch((error) => console.log(`${error} did not connect`));
 
@@ -108,13 +102,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("Connected to socket.io");
 
-  //Creating a new socket, where frontend sends some data and will join a room
   socket.on("setup", (userData) => {
     socket.join(userData._id);
     socket.emit("connected");
   });
 
-  //Will take room id from frontend
   socket.on("join chat", (room) => {
     socket.join(room);
     console.log("User Joined Room: " + room);
@@ -124,18 +116,14 @@ io.on("connection", (socket) => {
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
-    
-// In this we check which chat does the message belong to so that we can 
-//send it to the appropriate rooms that we created above
+
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
 
-    //If the chat doesn't have any users
     if (!chat.users) return console.log("chat.users not defined");
 
-    //For a grp chat msg should only be sent to others and not self
     chat.users.forEach((user) => {
-      if (user._id == newMessageRecieved.sender._id) return;
+      if (user._id === newMessageRecieved.sender._id) return;
 
       socket.in(user._id).emit("message recieved", newMessageRecieved);
     });

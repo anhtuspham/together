@@ -7,7 +7,7 @@ import {
   deletePost,
   getLikedPosts,
   getSavedPosts,
-  addComment, getComments, updateComment, getAllPost, deleteOnePost, reportPost,
+  addComment, getComments, updateComment, reportPost,
 } from "../controllers/posts.js";
 import { verifyToken } from "../middleware/auth.js";
 
@@ -31,9 +31,6 @@ router.post("/:postId/comment", verifyToken, addComment);
 router.patch("/:postId/report", verifyToken, reportPost);
 router.post("/:commentId/edit-comment", verifyToken, updateComment);
 
-// admin
-router.get("/admin/all-post", verifyToken, getAllPost);
-router.delete('/admin/delete/:postId', verifyToken, deleteOnePost);
 
 
 export default router;

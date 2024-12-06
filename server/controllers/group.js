@@ -1,7 +1,8 @@
 import express from "express";
 import Group from "../models/group.js";
 import User from "../models/User.js";
-import Post from "../models/Post.js";
+
+console.log("Group model in grou loaded successfully:", !!Group);
 
 const router = express.Router();
 
@@ -203,42 +204,15 @@ export const getRequest = async (req, res) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
-        // Kiểm tra nếu người dùng là admin của nhóm
         if (group.admin.toString() !== userId) {
             return res.status(403).json({ message: "You are not authorized to view requests" });
         }
 
-        // Nếu là admin, trả về danh sách yêu cầu
         const requests = await User.find({ '_id': { $in: group.requests } });
         res.status(200).json({ requests });
     } catch (error) {
         console.error("Error fetching requests:", error);
         res.status(500).json({ message: "Failed to fetch requests" });
-    }
-}
-
-export const getAllGroups = async (req, res) => {
-    try {
-        const groups = await Group.find()
-            .populate('admin', 'firstName lastName') // Lấy thông tin admin của nhóm
-            .populate('members', 'firstName lastName') // Lấy thông tin các thành viên của nhóm
-            .populate('post') // Lấy thông tin bài viết (nếu có)
-            .exec();
-        res.status(200).json(groups);
-    } catch (error) {
-        console.error("Error fetching groups:", error);
-        res.status(500).json({ message: "Failed to fetch groups" });
-    }
-};
-
-export const deleteGroup = async (req, res) => {
-    const { groupId } = req.params;
-    try {
-        await Group.findByIdAndDelete(groupId);
-        res.status(200).json({ message: "Group deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting group:", error);
-        res.status(500).json({ message: "Failed to delete group" });
     }
 }
 

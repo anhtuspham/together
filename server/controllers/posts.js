@@ -242,25 +242,3 @@ export const reportPost = async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 }
-
-
-export const getAllPost = async (req, res) => {
-    try {
-        const posts = await Post.find()
-        res.status(200).json(posts);
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-        res.status(500).json({ message: "Failed to fetch posts" });
-    }
-}
-
-export const deleteOnePost = async (req, res) => {
-    const { postId } = req.params;
-    try {
-        await Post.findByIdAndDelete(postId);
-        res.status(200).json({ message: "Post deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting post:", error);
-        res.status(500).json({ message: "Failed to delete post" });
-    }
-}

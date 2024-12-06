@@ -9,7 +9,7 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
-    getFriendStatus, updateInfoUser, updatePrivacySettings, getAllUser,  deleteUser
+    getFriendStatus, updatePrivacySettings
 } from "../controllers/users.js";
 import {verifyToken} from "../middleware/auth.js";
 
@@ -34,9 +34,9 @@ router.post("/:friendId/accept-friend", verifyToken, acceptFriendRequest);
 router.post("/:friendId/reject-friend", verifyToken, rejectFriendRequest);
 router.post('/:userId/editInfo', verifyToken, updatePrivacySettings);
 
-// ADMIN
-router.get("/admin/all-user", verifyToken, getAllUser);
-
-router.delete('/admin/delete/:userId', verifyToken, deleteUser);
+// // ADMIN
+// router.get("/admin/all-user", verifyToken, getAllUser);
+//
+// router.delete('/admin/delete/:userId', verifyToken, deleteUser);
 
 export default router;

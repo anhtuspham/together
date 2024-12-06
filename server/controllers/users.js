@@ -1,24 +1,6 @@
 import User from "../models/User.js";
 import Friendship from "../models/Friendship.js";
 import Notification from "../models/Notification.js";
-import Post from "../models/Post.js";
-// import Group from "../models/Group.js";
-
-//----------------READ--------------
-// export const getUser = async (req, res) => {
-//     try {
-//         const {id} = req.params;
-//         const user = await User.findById(id);
-//
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-//
-//         res.status(200).json(user);
-//     } catch (err) {
-//         res.status(404).json({message: err.message});
-//     }
-// }
 
 export const getUser = async (req, res) => {
     const {userId} = req.params;
@@ -60,9 +42,6 @@ export const getUserFriends = async (req, res) => {
         const {id} = req.params;
         const user = await User.findById(id);
 
-        //Promise is basically an object in JS thats completed in a async function 
-        // before moving forward in it
-        //In this we are grabbing all the friends by their id
         const friends = await Promise.all(
             user.friends.map((id) => User.findById(id))
         );
@@ -291,7 +270,6 @@ export const getReceivedFriendRequests = async (req, res) => {
             status: "pending"
         }).populate('senderId', 'firstName lastName picturePath location');
 
-        // Trả về danh sách người gửi
         const result = friendRequests.map(request => ({
             _id: request.senderId._id,
             firstName: request.senderId.firstName,
@@ -310,7 +288,7 @@ export const getReceivedFriendRequests = async (req, res) => {
 export const getSentFriendRequests = async (req, res) => {
     const {userId} = req.params;
     try {
-        // Tìm tất cả lời mời kết bạn do user gửi
+
         const test = await Friendship.find({senderId: userId});
         const friendRequests = await Friendship.find({
             senderId: userId,
@@ -318,7 +296,6 @@ export const getSentFriendRequests = async (req, res) => {
         }).populate('receiverId', 'firstName lastName picturePath location'); // Populate thông tin người nhận
 
 
-        // Trả về danh sách người nhận
         const result = friendRequests.map(request => ({
             _id: request.receiverId._id,
             firstName: request.receiverId.firstName,
@@ -389,27 +366,4 @@ export const updatePrivacySettings = async (req, res) => {
     }
 };
 
-
-export const getAllUser = async (req, res) => {
-    try {
-        console.log('ahaiahii')
-        console.log('Request received at /all-user');
-        const users = await User.find();
-        res.status(200).json(users);
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).json({ message: "Failed to fetch users" });
-    }
-}
-
-export const deleteUser = async (req, res) => {
-    const { userId } = req.params;
-    try {
-        await User.findByIdAndDelete(userId);
-        res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        res.status(500).json({ message: "Failed to delete user" });
-    }
-}
 

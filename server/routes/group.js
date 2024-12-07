@@ -23,9 +23,6 @@ router.post("/:groupId/leave", leaveGroup);
 router.post("/:groupId/requests/:userId/:adminId/accept", acceptJoinGroup);
 router.post("/:groupId/requests/:userId/:adminId/reject", rejectJoinGroup);
 
-// // admin
-// router.get("/admin/all-group", verifyToken, getAllGroups);
-// router.delete('/admin/delete/:groupId', verifyToken, deleteGroup);
 
 
 export default router;

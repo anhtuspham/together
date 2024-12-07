@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, memo} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {deletePost, setPost} from '../../state';
 import axios from 'axios';
@@ -11,7 +11,17 @@ import {
     BookmarkBorder,
     BookmarkOutlined, ReportOutlined,
 } from '@mui/icons-material';
-import {Box, Divider, IconButton, Typography, useTheme, Button, TextField} from '@mui/material';
+import {
+    Box,
+    Divider,
+    IconButton,
+    Typography,
+    useTheme,
+    Button,
+    TextField,
+    FormControlLabel,
+    RadioGroup, Modal, FormControl, FormLabel, Radio
+} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {Menu, MenuItem} from '@mui/material';
 
@@ -38,17 +48,19 @@ const PostWidget = ({
     const [isEditMode, setIsEditMode] = useState(false);
     const [newComment, setNewComment] = useState('');
     const [PostCategory, setPostCategory] = useState(false);
+    const [selectedReason, setSelectedReason] = useState("");
+    const [reportModalOpen, setReportModalOpen] = useState(false);
+    const currentUserId = useSelector((state) => state.user._id);
+
 
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
     const token = useSelector((state) => state.token);
     const loggedInUserId = useSelector((state) => state.user._id);
     const port = import.meta.env.VITE_PORT_BACKEND;
-    //As likes is a map, we will check if the current logged in user is
-    // present in the post likes map
 
     const isLiked = Boolean(likes[loggedInUserId]);
-    // Calculates no. of likes based on no. of keys
+
     const likeCount = Object.keys(likes).length;
 
     const {palette} = useTheme();
@@ -153,7 +165,7 @@ const PostWidget = ({
     };
 
     const handleUpdateComment = async (commentId) => {
-        if(!newComment.trim()){
+        if (!newComment.trim()) {
             return;
         }
         try {
@@ -168,17 +180,17 @@ const PostWidget = ({
                 }),
             });
 
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error('Failed to update comment');
             }
             const updatedData = await response.json();
             setLoadComments((prevComments) =>
                 prevComments.map((comment) =>
-                    comment._id === commentId ? { ...comment, content: newComment } : comment
+                    comment._id === commentId ? {...comment, content: newComment} : comment
                 )
             );
-            setIsEditMode(false); // Đóng chế độ sửa
-            setNewComment(''); // Reset gi
+            setIsEditMode(false);
+            setNewComment('');
         } catch (error) {
             console.error("Failed to update post", error);
         }
@@ -195,20 +207,93 @@ const PostWidget = ({
 
     const handleReportPost = async () => {
         try {
-
             const response = await fetch(`${port}/posts/${postId}/report`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify({
+                    userId: currentUserId,
+                    reason: selectedReason,
+                })
             });
-            console.log('comehere: ')
-            dispatch(setPost({ post: response.data }));
+            console.log('data: ', response)
+            // dispatch(setPost({ post: response.data }));
         } catch (error) {
             console.error("Failed to report post", error);
         }
     };
+
+    const ReportModal = memo(({open, onClose, onSubmit}) => {
+        return (
+            <Modal open={open} onClose={onClose}>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 400,
+                        height: "auto",
+                        bgcolor: "background.paper",
+                        boxShadow: 24,
+                        p: 4,
+                        borderRadius: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                    }}
+                >
+                    <FormControl>
+                        <FormLabel>Chọn lý do báo cáo:</FormLabel>
+                        <RadioGroup
+                            value={selectedReason}
+                            onChange={(e) => setSelectedReason(e.target.value)}
+                        >
+                            <FormControlLabel
+                                value="Thô tục"
+                                control={<Radio/>}
+                                label="Thô tục"
+                            />
+                            <FormControlLabel
+                                value="Không phù hợp"
+                                control={<Radio/>}
+                                label="Không phù hợp"
+                            />
+                            <FormControlLabel
+                                value="Bạo động"
+                                control={<Radio/>}
+                                label="Bạo động"
+                            />
+                            <FormControlLabel
+                                value="Sai sự thật"
+                                control={<Radio/>}
+                                label="Sai sự thật"
+                            />
+                        </RadioGroup>
+
+                    </FormControl>
+                    <Box sx={{display: "flex", justifyContent: "flex-end", gap: 1}}>
+                        <Button variant="outlined" onClick={onClose}>
+                            Hủy
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                onSubmit(selectedReason);
+                                onClose();
+                            }}
+                            disabled={!selectedReason}
+                        >
+                            Báo cáo
+                        </Button>
+                    </Box>
+                </Box>
+            </Modal>
+        );
+    });
 
     return (
         <WidgetWrapper m="2rem 0">
@@ -323,9 +408,16 @@ const PostWidget = ({
                     }
                 </FlexBetween>
 
-                <IconButton onClick={handleReportPost}>
+                <IconButton onClick={() => setReportModalOpen(true)}>
                     <ReportOutlined/>
                 </IconButton>
+                <ReportModal
+                    open={reportModalOpen}
+                    onClose={() => setReportModalOpen(false)}
+                    onSubmit={(reason) => {
+                        handleReportPost(reason)
+                    }}
+                />
             </FlexBetween>
             {/* Displaying the comments */}
             {isComments && (
@@ -350,17 +442,17 @@ const PostWidget = ({
                             return null;
                         }
 
-                        const isCommentOwner = comment.userId._id === loggedInUserId; // Check if the comment belongs to the logged-in user
+                        const isCommentOwner = comment.userId._id === loggedInUserId;
 
                         return (
                             <Box key={comment._id} display="flex" alignItems="center" mb="0.5rem">
                                 <img
                                     src={`${port}/assets/${comment.userId.picturePath || 'default-avatar.png'}`}
                                     alt="user-avatar"
-                                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "1rem" }}
+                                    style={{width: "40px", height: "40px", borderRadius: "50%", marginRight: "1rem"}}
                                 />
                                 <Box>
-                                    <Typography sx={{ color: main, fontWeight: "bold" }}>
+                                    <Typography sx={{color: main, fontWeight: "bold"}}>
                                         {comment.userId.firstName || 'Unknown'} {comment.userId.lastName || ''}
                                     </Typography>
                                     {isEditMode === comment._id ? (
@@ -371,13 +463,13 @@ const PostWidget = ({
                                                 onChange={(e) => setNewComment(e.target.value)} // Update the value
                                                 variant="outlined"
                                                 size="small"
-                                                sx={{ width: '70%' }}
+                                                sx={{width: '70%'}}
                                             />
                                             <Button
                                                 variant="contained"
                                                 size="small"
                                                 onClick={() => handleUpdateComment(comment._id)} // Update comment when clicked
-                                                sx={{ ml: 1 }}
+                                                sx={{ml: 1}}
                                             >
                                                 Save
                                             </Button>
@@ -385,14 +477,14 @@ const PostWidget = ({
                                                 variant="outlined"
                                                 size="small"
                                                 onClick={() => setIsEditMode(false)} // Exit edit mode
-                                                sx={{ ml: 1 }}
+                                                sx={{ml: 1}}
                                             >
                                                 Cancel
                                             </Button>
                                         </Box>
                                     ) : (
                                         <Box>
-                                            <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
+                                            <Typography sx={{color: main, m: '0.5rem 0', pl: '1rem'}}>
                                                 {comment.content}
                                             </Typography>
                                             {isCommentOwner && (
@@ -404,7 +496,7 @@ const PostWidget = ({
                                                         setNewComment(comment.content); // Set the current comment as value
                                                     }}
                                                 >
-                                                    Chỉnh sửa
+                                                    Edit
                                                 </Button>
                                             )}
                                         </Box>

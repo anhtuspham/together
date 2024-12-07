@@ -13,6 +13,31 @@ export const getAllUser = async (req, res) => {
     }
 }
 
+export const changeRole = async (req, res) => {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!role || !["user", "admin"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Role updated successfully",
+            user,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
 export const deleteUser = async (req, res) => {
     const { userId } = req.params;
     try {

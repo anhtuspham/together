@@ -1,15 +1,25 @@
 import express from "express";
-import {deleteGroup, deleteOnePost, deleteUser, getAllGroups, getAllPost, getAllUser} from "../controllers/admin.js";
+import {
+    changeRole,
+    deleteGroup,
+    deleteOnePost,
+    deleteUser,
+    getAllGroups,
+    getAllPost,
+    getAllUser
+} from "../controllers/admin.js";
 import {verifyToken} from "../middleware/auth.js";
 
 
 const router = express.Router();
 
 // GET
-router.get("/all-user", getAllUser);
-router.get("/all-post", getAllPost);
+router.get("/all-user", verifyToken,getAllUser);
+router.get("/all-post", verifyToken, getAllPost);
 router.get("/all-group", verifyToken, getAllGroups);
 
+// POST
+router.patch("/update-role/:userId", verifyToken, changeRole);
 
 // DELETE
 router.delete('/admin/delete/:userId', verifyToken, deleteUser);

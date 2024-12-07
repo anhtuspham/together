@@ -49,7 +49,7 @@ const FriendListWidget = ({userId}) => {
                         />
                     ))
                     : (
-                        <Typography>You dont have any friend, add someone to connect</Typography>
+                        <Typography>Bạn đang không có bạn bè nào, hãy tìm thêm bạn mới</Typography>
                     )}
             </Box>
         </WidgetWrapper>

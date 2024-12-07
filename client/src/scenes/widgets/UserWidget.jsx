@@ -154,7 +154,7 @@ const UserWidget = ({userId, picturePath}) => {
                         variant="contained"
                         color="primary"
                     >
-                        {isEditing ? "Thoát" : "Chỉnh sửa"}
+                        {isEditing ? "Cancel" : "Edit"}
                     </Button>
                 )}
             </FlexBetween>

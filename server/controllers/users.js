@@ -151,9 +151,6 @@ export const sendFriendRequest = async (req, res) => {
             return res.json({message: 'You are friend'})
         }
 
-        // Check relation between
-
-
         const existingRequest = await Friendship.findOne({
             senderId,
             receiverId,
@@ -173,8 +170,8 @@ export const sendFriendRequest = async (req, res) => {
         const notification = new Notification({
             userId: receiverId, // Người nhận thông báo
             message: `${sender.firstName} ${sender.lastName} sent a friend request.`,
-            type: "follow", // Loại thông báo (có thể chỉnh sửa nếu cần)
-            link: `/profile/${senderId}`, // Link dẫn đến trang profile của người gửi
+            type: "follow",
+            link: `/profile/${senderId}`,
         });
 
         await notification.save();
@@ -191,8 +188,8 @@ export const sendFriendRequest = async (req, res) => {
 };
 
 export const acceptFriendRequest = async (req, res) => {
-    const {friendId} = req.params; // ID của lời mời kết bạn
-    const {userId} = req.body; // ID của người nhận lời mời (từ token hoặc frontend gửi lên)
+    const {friendId} = req.params;
+    const {userId} = req.body;
 
     try {
         const sender = await User.findById(friendId);
@@ -220,7 +217,7 @@ export const acceptFriendRequest = async (req, res) => {
         });
 
         const notification = new Notification({
-            userId: friendId, // Người nhận thông báo
+            userId: friendId,
             message: `${sender.firstName} ${sender.lastName} accept your friend request.`,
             type: "follow",
             link: `/profile/${friendId}`,
@@ -236,11 +233,10 @@ export const acceptFriendRequest = async (req, res) => {
 };
 
 export const rejectFriendRequest = async (req, res) => {
-    const {friendId} = req.params; // ID của lời mời kết bạn
-    const {userId} = req.body; // ID của người nhận lời mời (từ token hoặc frontend gửi lên)
+    const {friendId} = req.params;
+    const {userId} = req.body;
 
     try {
-        // Tìm lời mời kết bạn trong cơ sở dữ liệu
         const friendRequest = await Friendship.findOne({senderId: friendId, receiverId: userId});
 
 
@@ -248,12 +244,10 @@ export const rejectFriendRequest = async (req, res) => {
             return res.status(404).json({message: "Friend request not found"});
         }
 
-        // Kiểm tra xem người nhận có phải là người được mời không
         if (friendRequest.receiverId.toString() !== userId) {
             return res.status(403).json({message: "You are not authorized to accept this request"});
         }
 
-        // Cập nhật trạng thái của lời mời thành 'accepted'
         await Friendship.deleteOne({senderId: friendId, receiverId: userId});
 
         return res.status(200).json({message: "Friend request rejected successfully"});
@@ -297,7 +291,7 @@ export const getSentFriendRequests = async (req, res) => {
         const friendRequests = await Friendship.find({
             senderId: userId,
             status: "pending"
-        }).populate('receiverId', 'firstName lastName picturePath location'); // Populate thông tin người nhận
+        }).populate('receiverId', 'firstName lastName picturePath location');
 
 
         const result = friendRequests.map(request => ({
@@ -372,47 +366,6 @@ export const updatePrivacySettings = async (req, res) => {
 
 
 export const getUserActivity = async (req, res) => {
-    // const { userId } = req.params;
-    // try {
-    //     // Lấy tất cả dữ liệu từ các bảng liên quan
-    //     const comments = await Comment.find({ userId }).populate("postId");
-    //     console.log('comment: ', comments);
-    //     const notifications = await Notification.find({ userId });
-    //     console.log('notifi', notifications);
-    //     const friendships = await Friendship.find({
-    //         $or: [{ senderId: userId }, { receiverId: userId }],
-    //     }).populate("senderId receiverId");
-    //     console.log('friend:', friendships);
-    //     const posts = await Post.find({ userId });
-    //
-    //     console.log('userId: ', userId)
-    //     // Gộp và định dạng dữ liệu
-    //     const activities = [
-    //         ...comments.map((c) => ({
-    //             type: "comment",
-    //             data: c,
-    //         })),
-    //         ...notifications.map((n) => ({
-    //             type: "notification",
-    //             data: n,
-    //         })),
-    //         ...friendships.map((f) => ({
-    //             type: "friendship",
-    //             data: f,
-    //         })),
-    //         ...posts.map((p) => ({
-    //             type: "post",
-    //             data: p,
-    //         })),
-    //     ];
-    //
-    //     // Sắp xếp theo thứ tự thời gian
-    //     activities.sort((a, b) => new Date(b.data.createdAt) - new Date(a.data.createdAt));
-    //
-    //     res.status(200).json(activities);
-    // } catch (error) {
-    //     res.status(500).json({ message: "Error fetching activities", error });
-    // }
 
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -420,13 +373,11 @@ export const getUserActivity = async (req, res) => {
     }
 
     try {
-        // Decode token để lấy thông tin userId
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
 
         console.log('userId: ', userId)
 
-        // Lấy hoạt động của người dùng
         const comments = await Comment.find({ userId }).populate("postId");
         const notifications = await Notification.find({ userId });
         const friendships = await Friendship.find({

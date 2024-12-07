@@ -29,8 +29,6 @@ const ChatSearchBar = ({helpertext, onClickAction, handleGroup, handleAddUser}) 
 
   const handleSearch = async (event) => {
     event.preventDefault();
-    // Basically to anchor the dropdown of search results to any particular 
-    // component. In this case we do it to the FlexBetween component.
     setAnchorEl(spanRef.current);
 
     try {
@@ -52,7 +50,6 @@ const ChatSearchBar = ({helpertext, onClickAction, handleGroup, handleAddUser}) 
     }
   };
 
-  //Handles the closing of search results dropdown
   const handleClose = () => {
     setAnchorEl(null);
     setSearchResults([]);

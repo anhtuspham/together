@@ -218,6 +218,7 @@ export const updateComment = async (req, res) => {
 
 export const reportPost = async (req, res) => {
     const { postId } = req.params;
+    const { userId, reason } = req.body;
 
     try {
         const post = await Post.findById(postId);
@@ -226,15 +227,28 @@ export const reportPost = async (req, res) => {
             return res.status(404).json({ message: "Post not found!" });
         }
 
-        if (post.isReported) {
-            return res.status(400).json({ message: "This post has already been reported." });
+        const hasReported = post.reportReasons.some(
+            (report) => report.userId === userId
+        );
+
+        if (hasReported) {
+            return res
+                .status(400)
+                .json({ message: "You have already reported this post." });
         }
 
-        post.isReported = true;
+        post.reportReasons.push({ reason, userId });
+        post.reportCount += 1;
+
+        if (post.reportCount >= 3) {
+            post.isReported = true;
+        }
 
         await post.save();
 
-        return res.status(200).json({ message: "Post has been reported successfully!", post });
+        return res
+            .status(200)
+            .json({ message: "Post has been reported successfully!", post });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Server error" });

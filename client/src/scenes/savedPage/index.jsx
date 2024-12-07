@@ -88,19 +88,6 @@ const SavedPage = () => {
     setSelectedCategory(event.target.value);
   };
 
-  // const handleRemoveItem = (index) => {
-  //   const items = JSON.parse(localStorage.getItem('savedPosts')) || [];
-  //   items.splice(index, 1);
-  //   localStorage.setItem('savedPosts', JSON.stringify(items));
-  //   window.location.reload();
-  // };
-
-  // const deleteAllSaved = () => {
-  //   localStorage.removeItem('savedPosts');
-  // };
-  // useEffect(() => {
-  //   getsavedPosts();
-  // }, []);
 
   console.log("Here: ", fetchedPosts)
   // const cat = fetchedPosts.map((image) => image.category);
@@ -150,8 +137,7 @@ const SavedPage = () => {
                   likes={image.likes}
                   comments={image.comments}
                 />
-                {/* <Button variant="contained" color="error" style={{ marginTop: '1rem' }}
-                  onClick={() => handleRemoveItem(index)}>Remove</Button> */}
+
               </Grid>
             ))
 

@@ -134,11 +134,10 @@ const Navbar = () => {
       <FlexBetween gap="1.75rem" >
         <Typography
           fontWeight="bold"
-          //clamp allows you to provide a range a values
-          //i.e min = 1rem, max = 2.25rem, prefered = 2rem
+
           fontSize="clamp(1rem, 2rem, 2.25rem)"
           color="primary"
-          //Navigate to home on clicking logo
+
           onClick={() => navigate("/home")}
           //CSS for logo image
           sx={{
@@ -151,7 +150,6 @@ const Navbar = () => {
           Together
         </Typography>
         {isNonMobileScreens && (
-          //If its not a Mobile screen Then we give it a search bar
           <SearchBar/>
         )}
       </FlexBetween>
@@ -159,7 +157,7 @@ const Navbar = () => {
       {/* DESKTOP NAV */ }
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
-            {/* Light And Dark Mode Button */}
+
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />

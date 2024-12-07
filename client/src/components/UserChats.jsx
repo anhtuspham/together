@@ -53,11 +53,6 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
         // eslint-disable-next-line
     }, [fetchAgain]);
 
-//     useEffect(() => {
-//     if (fetchAgain) {
-//       fetchChats();
-//     }
-//   }, [fetchAgain]);
 
     return (
             <Box

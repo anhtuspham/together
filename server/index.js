@@ -23,7 +23,7 @@ import { verifyToken } from './middleware/auth.js';
 import { Server } from "socket.io";
 
 
-// ------------CONFIGURATIONS (Includes all middleware and diff pckg config)-------
+// ------------CONFIGURATIONS -------
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);         
 //To use dotenv files
@@ -112,7 +112,6 @@ io.on("connection", (socket) => {
     console.log("User Joined Room: " + room);
   });
 
-  //New socket for typing
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 

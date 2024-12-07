@@ -3,7 +3,7 @@ import {
     acceptJoinGroup,
     addGroup,
     getGroup,
-    getGroupStatus, getRequest,
+    getGroupStatus, getGroupsUserHasJoined, getGroupsUserHasRequestedToJoin, getGroupsUserIsAdmin, getRequest,
     joinGroup,
     leaveGroup,
     rejectJoinGroup
@@ -15,6 +15,10 @@ const router = express.Router();
 router.get("/search", verifyToken, searchUser);
 router.get("/:groupId/:userId/status", verifyToken, getGroupStatus);
 router.get("/:groupId/:userId/get-request", verifyToken, getRequest);
+
+router.get("/:userId/joined", verifyToken, getGroupsUserHasJoined);
+router.get("/:userId/admin", verifyToken, getGroupsUserIsAdmin);
+router.get("/:userId/requests", verifyToken, getGroupsUserHasRequestedToJoin);
 
 router.get("/get-group", getGroup);
 router.post("/:userId/add-group", addGroup);

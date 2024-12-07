@@ -256,17 +256,6 @@ const UserWidget = ({userId, picturePath}) => {
                     </Button>
                 </FlexBetween>
 
-                <FlexBetween gap="1rem" mb="0.5rem">
-                    <FlexBetween gap="1rem">
-                        <img src={logo} alt="ute" style={{ width: "25px", height: "25px" }} />
-                        <Box>
-                            <Typography color={main} fontWeight="500">
-                                UTE
-                            </Typography>
-                            <Typography color={medium}>01 Vo Van Ngan</Typography>
-                        </Box>
-                    </FlexBetween>
-                </FlexBetween>
             </Box> : (<></>)}
 
             {/* ADD GROUP DIALOG */}
@@ -291,6 +280,7 @@ const UserWidget = ({userId, picturePath}) => {
                             setGroupData({ ...groupData, description: e.target.value })
                         }
                     />
+
                     <FormControlLabel
                         control={
                             <Switch
@@ -314,7 +304,6 @@ const UserWidget = ({userId, picturePath}) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {isSelf ? <GroupList /> : <></>}
         </WidgetWrapper>
     );
 };

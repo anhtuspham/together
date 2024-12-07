@@ -20,9 +20,9 @@ import {
   Bookmarks,
   Menu,
   Close,
-    AccessTimeFilledOutlined
+  AccessTimeFilledOutlined, Groups2,
 } from "@mui/icons-material";
-import RestoreRoundedIcon from '@mui/icons-material/RestoreRounded';
+
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "../../state";
 import { useNavigate } from "react-router-dom";
@@ -225,6 +225,13 @@ const Navbar = () => {
               </Box>
           )}
 
+          {/* GROUP */}
+
+          <IconButton onClick={() => navigate("/group")}>
+            <Groups2/>
+          </IconButton>
+
+          {/* Activity */}
           <IconButton onClick={() => navigate("/activity")} size="large">
             <AccessTimeFilledOutlined/>
           </IconButton>
@@ -297,6 +304,8 @@ const Navbar = () => {
             gap="3rem"
           >
             <SearchBar />
+
+            {/* MODE */}
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}
@@ -307,11 +316,13 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
+
+            {/* MESSAGE */}
             <Message
               onClick = {() => navigate("/chat")}
               sx={{ fontSize: "25px" }} />
 
-
+            {/* NOTIFICATION */}
             <IconButton onClick={handleClick} size="large">
               <Badge
                 badgeContent={notification.length}
@@ -326,11 +337,22 @@ const Navbar = () => {
               </Badge>
             </IconButton>
 
+            <IconButton onClick={() => navigate("/group")}>
+              <Groups2/>
+            </IconButton>
+
+            {/* Activity */}
+            <IconButton onClick={() => navigate("/activity")} size="large">
+              <AccessTimeFilledOutlined/>
+            </IconButton>
+
+            {/* SAVE button */}
             <IconButton>
               <Bookmarks
                 onClick = {() => navigate("/saved/${user._id}")}
                 sx={{ fontSize: "25px" }} />
             </IconButton>
+
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}

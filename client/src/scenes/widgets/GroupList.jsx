@@ -3,7 +3,7 @@ import { Box, Button, Typography, Card, CardContent, CardMedia } from "@mui/mate
 import logo from '../../assets/ute.jpg';
 import GroupRequest from "../../components/GroupRequest.jsx";
 
-const GroupsPage = () => {
+const GroupList = () => {
     const [groups, setGroups] = useState([]);
 
     const fetchGroups = async () => {
@@ -60,4 +60,4 @@ const GroupsPage = () => {
     );
 };
 
-export default GroupsPage;
+export default GroupList;

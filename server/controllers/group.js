@@ -214,6 +214,52 @@ export const getRequest = async (req, res) => {
     }
 }
 
+export const getGroupsUserHasJoined = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const groups = await Group.find({
+            members: userId,
+        }).populate('members', 'firstName lastName');
+
+        console.log('joined: ', groups);
+        res.status(200).json(groups);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch groups" });
+    }
+}
+
+export const getGroupsUserIsAdmin = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const groups = await Group.find({ admin: userId }).populate('admin', 'firstName lastName');
+
+        res.status(200).json(groups);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch groups" });
+    }
+};
+
+export const getGroupsUserHasRequestedToJoin = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+
+        const groups = await Group.find({
+            requests: userId,
+            isPublic: false,
+        }).populate('requests', 'firstName lastName');
+
+        res.status(200).json(groups);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch groups" });
+    }
+};
+
 
 
 export default router;

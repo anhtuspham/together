@@ -14,6 +14,7 @@ import {themeSettings} from "./theme";
 import {setLogout} from "./state/index.js";
 import Admin from "./scenes/admin/index.jsx";
 import AdminPage from "./scenes/admin/index.jsx";
+import GroupPage from "./scenes/groupPage/index.jsx";
 
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
     let isAdmin = false;
 
     const user = useSelector((state) => state.user);
-    if(user){
+    if (user) {
         isAdmin = user.role === 'admin';
     }
 
@@ -65,6 +66,7 @@ function App() {
                             element={isAuth ? <ChatPage/> : <Navigate to="/"/>}
                         />
                         <Route path="/activity" element={isAuth ? <ActivityPage/> : <Navigate to="/"/>}/>
+                        <Route path="/group" element={isAuth ? <GroupPage/> : <Navigate to="/"/>}/>
                         <Route
                             path='/saved/:userId'
                             element={isAuth ? <SavedPage/> : <Navigate to='/'/>}

@@ -57,9 +57,6 @@ const ProfilePage = () => {
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile />
         </Box>
-        <Box>
-          {isSelf ? <RecentActivities/> : (<></>)}
-        </Box>
       </Box>
     </Box>
   );

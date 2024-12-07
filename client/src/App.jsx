@@ -1,9 +1,10 @@
 import {BrowserRouter, Navigate, Routes, Route} from "react-router-dom";
-//We dont have to make a lot of relative addressing because of jsconfig.json
+
 import HomePage from "./scenes/homePage";
 import LoginPage from "./scenes/loginPage";
 import ProfilePage from "./scenes/profilePage";
 import ChatPage from "./scenes/chatPage";
+import ActivityPage from "./scenes/activityPage/index.jsx";
 import SavedPage from './scenes/savedPage';
 import {useEffect, useMemo} from "react";
 import {useSelector, useDispatch} from "react-redux";
@@ -22,6 +23,13 @@ function App() {
     const mode = useSelector((state) => state.mode);
     const token = useSelector((state) => state.token);
     const isAuth = Boolean(token);
+    let isAdmin = false;
+
+    const user = useSelector((state) => state.user);
+    if(user){
+        isAdmin = user.role === 'admin';
+    }
+
     const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
 
     useEffect(() => {
@@ -56,13 +64,14 @@ function App() {
                             path="/chat"
                             element={isAuth ? <ChatPage/> : <Navigate to="/"/>}
                         />
+                        <Route path="/activity" element={isAuth ? <ActivityPage/> : <Navigate to="/"/>}/>
                         <Route
                             path='/saved/:userId'
                             element={isAuth ? <SavedPage/> : <Navigate to='/'/>}
                         />
                         <Route
                             path='/admin'
-                            element={isAuth ? <AdminPage/> : <Navigate to='/'/>}
+                            element={isAuth && isAdmin ? <AdminPage/> : <Navigate to='/home'/>}
                         />
                     </Routes>
                 </ThemeProvider>

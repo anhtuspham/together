@@ -20,7 +20,9 @@ import {
   Bookmarks,
   Menu,
   Close,
+    AccessTimeFilledOutlined
 } from "@mui/icons-material";
+import RestoreRoundedIcon from '@mui/icons-material/RestoreRounded';
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "../../state";
 import { useNavigate } from "react-router-dom";
@@ -224,6 +226,10 @@ const Navbar = () => {
                 )}
               </Box>
           )}
+
+          <IconButton onClick={() => navigate("/activity")} size="large">
+            <AccessTimeFilledOutlined/>
+          </IconButton>
 
           <IconButton onClick = {() => navigate("/saved/${user._id}")}>
             <Bookmarks

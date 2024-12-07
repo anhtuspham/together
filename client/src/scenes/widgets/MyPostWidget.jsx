@@ -64,7 +64,7 @@ import {
         <FlexBetween gap="1.5rem">
           <UserImage image={picturePath} />
           <InputBase
-            placeholder="What's on your mind..."
+            placeholder="Bạn đang nghĩ gì..."
             onChange={(e) => setPost(e.target.value)}
             value={post}
             sx={{

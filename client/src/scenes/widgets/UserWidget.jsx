@@ -154,7 +154,7 @@ const UserWidget = ({userId, picturePath}) => {
                         variant="contained"
                         color="primary"
                     >
-                        {isEditing ? "Cancel" : "Edit Profile"}
+                        {isEditing ? "Thoát" : "Chỉnh sửa"}
                     </Button>
                 )}
             </FlexBetween>
@@ -176,7 +176,7 @@ const UserWidget = ({userId, picturePath}) => {
                         />
                         <FormControlLabel
                             control={<Switch checked={formData.locationPrivacy} onChange={() => setFormData({...formData, locationPrivacy: !formData.locationPrivacy})} />}
-                            label="Share location"
+                            label="Công khai location"
                         />
                     </Box>
                     <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
@@ -191,7 +191,7 @@ const UserWidget = ({userId, picturePath}) => {
                         />
                         <FormControlLabel
                             control={<Switch checked={formData.occupationPrivacy} onChange={() => setFormData({...formData, occupationPrivacy: !formData.occupationPrivacy})} />}
-                            label="Share occupation"
+                            label="Công khai occupation"
                         />
                     </Box>
                     <Box display="flex" alignItems="center" gap="1rem" mb="1rem">
@@ -207,7 +207,7 @@ const UserWidget = ({userId, picturePath}) => {
                         />
                         <FormControlLabel
                             control={<Switch checked={formData.emailPrivacy} onChange={() => setFormData({...formData, emailPrivacy: !formData.emailPrivacy})} />}
-                            label="Share email"
+                            label="Công khai email"
                         />
                     </Box>
                     <Button
@@ -216,7 +216,7 @@ const UserWidget = ({userId, picturePath}) => {
                         fullWidth
                         onClick={updateUser}
                     >
-                        Save Changes
+                        Lưu
                     </Button>
                 </Box>
             ) : (
@@ -242,17 +242,17 @@ const UserWidget = ({userId, picturePath}) => {
 
             {isSelf ? <Box p="1rem 0">
                 <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
-                    My Group
+                    Nhóm của tôi
                 </Typography>
 
                 <FlexBetween mb="1rem">
-                    <Typography color={main}>Groups List</Typography>
+                    <Typography color={main}>Danh sách nhóm</Typography>
                     <Button
                         variant="outlined"
                         startIcon={<AddCircleOutlineOutlined />}
                         onClick={() => setOpenAddGroup(true)}
                     >
-                        Add Group
+                        Thêm nhóm
                     </Button>
                 </FlexBetween>
 

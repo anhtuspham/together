@@ -1,18 +1,14 @@
 import React from 'react';
-import { 
+import {
   CircularProgress,
-  useTheme, 
-  IconButton, 
-  Box, 
-  Paper, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Grid, 
-  Divider, 
-  TextField, 
-  Fab, 
-  Typography } from '@mui/material';
+  useTheme,
+  IconButton,
+  Box,
+  Paper,
+  TextField,
+  Fab,
+  Typography, Grid
+} from '@mui/material';
 import { Send, Settings } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { ChatState } from "../Context/ChatProvider";
@@ -27,8 +23,8 @@ import "./styles.css";
 
 
 import io from "socket.io-client";
-const ENDPOINT = "http://localhost:3001"; 
-var socket, selectedChatCompare;
+const ENDPOINT = "http://localhost:3001";
+let socket, selectedChatCompare;
 
 const ChatDetail = ({fetchAgain, setFetchAgain}) => {
   const loggedUser = useSelector((state) => state.user);
@@ -81,7 +77,7 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
 
   const sendMessage = async () => {
     if (newMessage) {
-      //After sending messg we should stop typing
+
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
@@ -183,29 +179,6 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
         height: '100%',
       }}
     >
-      {/* <List style={{ height: '70vh', overflowY: 'auto', width: '100%', flex: '1 1 auto' }}>
-        <ListItem key="1">
-          <Grid container>
-            <Grid item xs={12}>
-              <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-            </Grid>
-            <Grid item xs={12}>
-              <ListItemText align="right" secondary="09:30"></ListItemText>
-            </Grid>
-          </Grid>
-        </ListItem>
-      </List>
-      <Divider />
-      <Grid container style={{ padding: '20px' }}>
-        <Grid item xs={11}>
-          <TextField id="outlined-basic-email" label="Type Something" fullWidth />
-        </Grid>
-        <Grid xs={1} align="right">
-          <Fab color="primary" aria-label="add">
-            <Send />
-          </Fab>
-        </Grid>
-      </Grid> */}
 
       {selectedChat ? (
           <>
@@ -310,8 +283,6 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
     />
 
     </>
-
-
   );
 };
 

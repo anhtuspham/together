@@ -162,10 +162,10 @@ const GroupChatModal = ({ children }) => {
         </DialogContent>
         <DialogActions>
             <Button autoFocus onClick={handleSubmit}>
-                Add Chat
+                Thêm đoạn chat
             </Button> 
             <Button autoFocus onClick={handleClose}>
-                Close
+                Đóng
             </Button>
         </DialogActions>
       </Dialog>

@@ -19,7 +19,7 @@ const ReceivedFriendListWidget = ({userId}) => {
                 fontWeight="500"
                 sx={{mb: "1.5rem"}}
             >
-                Requests for You
+                Lời mời kết bạn
             </Typography>
             <Box display="flex" flexDirection="column" gap="1.5rem">
                 {receivedFriends && Array.isArray(receivedFriends) && receivedFriends.length > 0 ? (
@@ -33,7 +33,7 @@ const ReceivedFriendListWidget = ({userId}) => {
                         />
                     ))
                 ) : (
-                    <Typography>No friend requests found.</Typography>
+                    <Typography>Không có lời mời kết bạn nào.</Typography>
                 )}
             </Box>
         </WidgetWrapper>

@@ -86,7 +86,7 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
                     align="center"
                     sx={{marginBottom: '5px' }}
                     >
-                    Your Chats
+                    Kênh chat của bạn
                     </Typography>
                     <Divider />
                      <Box
@@ -136,7 +136,7 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
                         endIcon={<GroupAdd/>}
                         sx={{ml: "20px"}}
                         >
-                            Add New Group Chat
+                            Thêm nhóm chat mới
                         </Button>
                     </GroupChatModal>
                     

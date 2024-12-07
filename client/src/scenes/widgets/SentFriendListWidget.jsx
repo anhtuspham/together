@@ -20,7 +20,7 @@ const SentFriendListWidget = ({userId}) => {
                 fontWeight="500"
                 sx={{mb: "1.5rem"}}
             >
-                Wait to accept
+                Lời mời đã gửi
             </Typography>
             <Box display="flex" flexDirection="column" gap="1.5rem">
                 {sentFriends && Array.isArray(sentFriends) && sentFriends.length > 0 ? (
@@ -34,7 +34,7 @@ const SentFriendListWidget = ({userId}) => {
                         />
                     ))
                 ) : (
-                    <Typography>No friend requests found.</Typography>
+                    <Typography>Không có lời mời.</Typography>
                 )}
             </Box>
         </WidgetWrapper>

@@ -335,13 +335,13 @@ const PostWidget = ({
                         label=''
                         name='content'
                         variant='standard'
-                        placeholder='Add your Comment'
+                        placeholder='Thêm bình luận'
                         size='small'
                         sx={{p: '0.3rem'}}
                         onChange={(e) => setNewComment(e.target.value)}
                     />
                     <Button variant='contained' size='small' onClick={() => addComment()}>
-                        Add
+                        Thêm bình luận
                     </Button>
 
                     {loadcomments?.map(comment => {
@@ -404,7 +404,7 @@ const PostWidget = ({
                                                         setNewComment(comment.content); // Set the current comment as value
                                                     }}
                                                 >
-                                                    Edit
+                                                    Chỉnh sửa
                                                 </Button>
                                             )}
                                         </Box>

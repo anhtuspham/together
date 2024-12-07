@@ -24,13 +24,15 @@ import FlexBetween from "../../components/FlexBetween";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-//How the form library will store the form details
-//Yup will help to validate the user input
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("Required"),
   lastName: yup.string().required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
   password: yup.string().required("Required"),
+  confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required("Required"),
   location: yup.string().required("Required"),
   occupation: yup.string().required("Required"),
   picture: yup.string().required("Required"),
@@ -46,6 +48,7 @@ const initialValuesRegister = {
   lastName: "",
   email: "",
   password: "",
+  confirmPassword: "",
   location: "",
   occupation: "",
   picture: "",
@@ -68,7 +71,9 @@ const Form = () => {
 
   //For Password Show/Hide
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
 
   //For Login Error
   const [loginError, setLoginError] = useState(false);
@@ -107,41 +112,6 @@ const Form = () => {
     }
   };
 
-  // const login = async (values, onSubmitProps) => {
-  //   const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(values),
-  //   });
-  //   const loggedIn = await loggedInResponse.json();
-  //   // onSubmitProps.resetForm();
-  //   // //If login info is correct, it sets the user and token info
-  //   // if (loggedIn) {
-  //   //   dispatch(
-  //   //     setLogin({
-  //   //       user: loggedIn.user,
-  //   //       token: loggedIn.token,
-  //   //     })
-  //   //   );
-  //   //   // And then we navigate to the home page
-  //   //   navigate("/home");
-  //   // }
-  //   if (loggedIn.error) {
-  //     // Handle incorrect email or password error
-  //     // You can display an error message or update the form state
-  //     // For example, using Formik's setErrors function:
-  //     onSubmitProps.setErrors({ login: "Incorrect email or password" });
-  //   } else {
-  //     onSubmitProps.resetForm();
-  //     dispatch(
-  //       setLogin({
-  //         user: loggedIn.user,
-  //         token: loggedIn.token,
-  //       })
-  //     );
-  //     navigate("/home");
-  //   }
-  // };
   const login = async (values, onSubmitProps) => {
     try {
       const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
@@ -186,7 +156,6 @@ const Form = () => {
   return (
     <Formik
       onSubmit={handleFormSubmit}
-      // If on login page, then initialize login values or intitalize with register values
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
       validationSchema={isLogin ? loginSchema : registerSchema}
     >
@@ -201,7 +170,6 @@ const Form = () => {
         resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
-          {/* gridTemplateColumns is basically going to create a grid having 4 sections */}
           <Box
             display="grid"
             gap="30px"
@@ -211,7 +179,7 @@ const Form = () => {
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
-            {isRegister && (
+            {isRegister ? (
               <>
                 <TextField
                   label="First Name"
@@ -268,13 +236,12 @@ const Form = () => {
                   <Dropzone
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
-                    // In this setFieldValue is basically allowing us to manually
-                    // set the picture field value to something
+
                     onDrop={(acceptedFiles) =>
                       setFieldValue("picture", acceptedFiles[0])
                     }
                   >
-                    {/* Code Reqd for Dropzone */}
+
                     {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}
@@ -282,8 +249,7 @@ const Form = () => {
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
-                        {/* If theres no picture in dropzone then we display some text
-                        else we show the name of the picture added */}
+
                         <input {...getInputProps()} />
                         {!values.picture ? (
                           <p>Add Picture Here</p>
@@ -297,52 +263,128 @@ const Form = () => {
                     )}
                   </Dropzone>
                 </Box>
+                <TextField
+                    label="Email"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.email}
+                    name="email"
+                    error={Boolean(touched.email) && Boolean(errors.email)}
+                    helpertext={touched.email && errors.email}
+                    sx={{ gridColumn: "span 4" }}
+                />
+
+                <FormControl
+                    sx={{ gridColumn: "span 4", ...(loginError && { color: "red" }) }}
+                >
+                  <InputLabel htmlFor="outlined-adornment-password">
+                    Password
+                  </InputLabel>
+
+                  <OutlinedInput
+                      id="outlined-adornment-password"
+                      type={showPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.password}
+                      name="password"
+                      error={Boolean(touched.password) && Boolean(errors.password)}
+                      helpertext={touched.password && errors.password}
+                      label="Password"
+                  />
+
+                </FormControl>
+
+                <FormControl
+                    sx={{ gridColumn: "span 4", ...(loginError && { color: "red" }) }}
+                >
+                  <InputLabel htmlFor="outlined-adornment-confirm-password">
+                    Confirm password
+                  </InputLabel>
+
+                  <OutlinedInput
+                      id="outlined-adornment-confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                              aria-label="toggle confirm password visibility"
+                              onClick={handleClickShowConfirmPassword}
+                              edge="end"
+                          >
+                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.confirmPassword}
+                      name="confirmPassword"
+                      error={
+                          Boolean(touched.confirmPassword) &&
+                          Boolean(errors.confirmPassword)
+                      }
+                      helperText={touched.confirmPassword && errors.confirmPassword}
+                      sx={{ gridColumn: "span 4" }}
+                      label="Confirm Password"
+                  />
+
+                </FormControl>
               </>
-            )}
-
-            <TextField
-              label="Email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.email}
-              name="email"
-              error={Boolean(touched.email) && Boolean(errors.email)}
-              helpertext={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
-            />
-
-            <FormControl
-              sx={{ gridColumn: "span 4", ...(loginError && { color: "red" }) }}
-            >
-              <InputLabel htmlFor="outlined-adornment-password">
-                Password
-              </InputLabel>
-
-              {/* Here The Component Input Adornment is allowing us to
-              add the show/hide icon in the password textfield */}
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPassword ? "text" : "password"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
+            ): (<><TextField
+                label="Email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.password}
-                name="password"
-                error={Boolean(touched.password) && Boolean(errors.password)}
-                helpertext={touched.password && errors.password}
-                label="Password"
-              />
-            </FormControl>
+                value={values.email}
+                name="email"
+                error={Boolean(touched.email) && Boolean(errors.email)}
+                helpertext={touched.email && errors.email}
+                sx={{ gridColumn: "span 4" }}
+            />
+
+              <FormControl
+                  sx={{ gridColumn: "span 4", ...(loginError && { color: "red" }) }}
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? "text" : "password"}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.password}
+                    name="password"
+                    error={Boolean(touched.password) && Boolean(errors.password)}
+                    helpertext={touched.password && errors.password}
+                    label="Password"
+                />
+              </FormControl></>)}
+
+
           </Box>
 
           {/* BUTTONS */}

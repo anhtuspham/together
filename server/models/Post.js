@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const postSchema = mongoose.Schema(
-    {  
+    {
         userId: {
             type: String,
             required: true,
@@ -31,12 +31,25 @@ const postSchema = mongoose.Schema(
             type: Map,
             of: Boolean,
         },
-        comments:  [
-            { type: mongoose.Types.ObjectId, ref: 'Comment' }],
+        comments: [
+            {type: mongoose.Types.ObjectId, ref: 'Comment'}],
         isReported: {
             type: Boolean,
             default: false
-        }
+        },
+        reportReasons: [
+            {
+                reason: {
+                    type: String,
+                    enum: ["Thô tục", "Không phù hợp", "Bạo động", "Sai sự thật"],
+                },
+                userId: {type: String},
+            },
+        ],
+        reportCount: {
+            type: Number,
+            default: 0,
+        },
     },
     {
         timestamps: true

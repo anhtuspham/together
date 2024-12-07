@@ -219,8 +219,6 @@ export const updateComment = async (req, res) => {
 export const reportPost = async (req, res) => {
     const { postId } = req.params;
 
-    console.log('postId', postId)
-
     try {
         const post = await Post.findById(postId);
 

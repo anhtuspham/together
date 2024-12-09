@@ -70,7 +70,7 @@ const PostWidget = ({
     const [loadcomments, setLoadComments] = useState(comments || []);
 
     useEffect(() => {
-        fetch(`http://localhost:3001/posts/${postId}/comment`, {
+        fetch(`${import.meta.env.VITE_PORT_BACKEND}/posts/${postId}/comment`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

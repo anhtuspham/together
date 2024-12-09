@@ -66,7 +66,7 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
         },
       };
       const { data } = await axios.put(
-        `http://localhost:3001/chat/rename`,
+        `${import.meta.env.VITE_PORT_BACKEND}/chat/rename`,
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -108,7 +108,7 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
         },
       };
       const { data } = await axios.put(
-        `http://localhost:3001/chat/groupadd`,
+        `${import.meta.env.VITE_PORT_BACKEND}/chat/groupadd`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -142,7 +142,7 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
         },
       };
       const { data } = await axios.put(
-        `http://localhost:3001/chat/groupremove`,
+        `${import.meta.env.VITE_PORT_BACKEND}/chat/groupremove`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -159,7 +159,7 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
         data.groupAdmin = newAdmin;
       } else {
         // If there are no other users in the group, delete the chat
-        await axios.delete(`http://localhost:3001/chat/${selectedChat._id}`, config);
+        await axios.delete(`${import.meta.env.VITE_PORT_BACKEND}/chat/${selectedChat._id}`, config);
         setSelectedChat(); // Clear the selectedChat since the chat is deleted
       }
     }

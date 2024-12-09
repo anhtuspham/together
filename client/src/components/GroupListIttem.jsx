@@ -11,7 +11,7 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
     useEffect(() => {
         const checkMembership = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/group/${groupId}/${currentUserId}/status`, {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/status`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
     // Hàm xử lý tham gia nhóm
     const handleJoinGroup = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/group/${groupId}/${currentUserId}/join`, {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/join`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
         <Box display="flex" alignItems="center" gap="1rem">
             {picturePath && (
                 <Avatar
-                    src={`http://localhost:3001${picturePath}`}
+                    src={`${import.meta.env.VITE_PORT_BACKEND}${picturePath}`}
                     alt={name}
                     sx={{ width: 40, height: 40 }}
                 />

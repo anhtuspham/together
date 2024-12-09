@@ -30,7 +30,7 @@ const PostCategorizer = ({
     try {
       // Save the post to the database with the selected category
       const response = await axios.post(
-        `http://localhost:3001/saved`,
+        `${import.meta.env.VITE_PORT_BACKEND}/saved`,
         {
           userId,
           postId,

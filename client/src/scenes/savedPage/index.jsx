@@ -22,7 +22,7 @@ const SavedPage = () => {
    const getSavedPosts = async () => {
     console.log("UserId is:", loggedUserId);
     try {
-      const response = await axios.get(`http://localhost:3001/saved/${loggedUserId}`, {
+      const response = await axios.get(`${import.meta.env.VITE_PORT_BACKEND}/saved/${loggedUserId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Replace token with the actual user token
         },
@@ -38,7 +38,7 @@ const SavedPage = () => {
   const getPostsByPostIds = async (postIdsArray) => {
   try {
     const requests = postIdsArray.map((postId) =>
-      axios.get(`http://localhost:3001/posts/${postId}`, {
+      axios.get(`${import.meta.env.VITE_PORT_BACKEND}/posts/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -49,7 +49,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
         setLoading(true);
         try {
             const response = await fetch(
-                `http://localhost:3001/users/${_id}/sent-friend-requests`,
+                `${import.meta.env.VITE_PORT_BACKEND}/users/${_id}/sent-friend-requests`,
                 {
                     method: "GET",
                     headers: {Authorization: `Bearer ${token}`},
@@ -67,7 +67,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const getReceivedFriendsRequest = async () => {
         try {
             const response = await fetch(
-                `http://localhost:3001/users/${_id}/received-friend-requests`,
+                `${import.meta.env.VITE_PORT_BACKEND}/users/${_id}/received-friend-requests`,
                 {
                     method: "GET",
                     headers: {Authorization: `Bearer ${token}`},
@@ -112,7 +112,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
 
     const getFriends = async () => {
         const response = await fetch(
-            `http://localhost:3001/users/${_id}/friends`,
+            `${import.meta.env.VITE_PORT_BACKEND}/users/${_id}/friends`,
             {
                 method: "GET",
                 headers: {Authorization: `Bearer ${token}`},
@@ -182,7 +182,7 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const removeFriend = async () => {
         try {
             const response = await fetch(
-                `http://localhost:3001/users/${_id}/${friendId}`,
+                `${import.meta.env.VITE_PORT_BACKEND}/users/${_id}/${friendId}`,
                 {
                     method: "PATCH",
                     headers: {

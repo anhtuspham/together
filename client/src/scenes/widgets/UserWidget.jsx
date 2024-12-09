@@ -52,7 +52,7 @@ const UserWidget = ({userId, picturePath}) => {
     const main = palette.neutral.main;
 
     const getUser = async () => {
-        const response = await fetch(`http://localhost:3001/users/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/users/${userId}`, {
             method: "GET",
             headers: {Authorization: `Bearer ${token}`},
         });
@@ -70,7 +70,7 @@ const UserWidget = ({userId, picturePath}) => {
     };
 
     const updateUser = async () => {
-        const response = await fetch(`http://localhost:3001/users/${currentUserId}/editInfo`, {
+        const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/users/${currentUserId}/editInfo`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ const UserWidget = ({userId, picturePath}) => {
     };
 
     const handleAddGroup = async () => {
-        const response = await fetch(`http://localhost:3001/group/${userId}/add-group`, {
+        const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${userId}/add-group`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,

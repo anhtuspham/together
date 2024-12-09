@@ -82,7 +82,7 @@ const Navbar = () => {
 
   const fetchNotifications = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/notification/${userId}`);
+      const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/notification/${userId}`);
       const data = await response.json();
       console.log('data: ', data)
       return data; // Giả sử API trả về một mảng notifications
@@ -93,7 +93,7 @@ const Navbar = () => {
   const handleMarkAsRead = async (notifId) => {
     // Gửi request để đánh dấu notification là đã đọc
     try {
-      await fetch(`http://localhost:3001/notification/${notifId}/read`, {
+      await fetch(`${import.meta.env.VITE_PORT_BACKEND}/notification/${notifId}/read`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

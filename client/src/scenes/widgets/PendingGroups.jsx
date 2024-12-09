@@ -9,7 +9,7 @@ const PendingGroups = ({ userId }) => {
     useEffect(() => {
         const fetchGroups = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/group/${userId}/requests`, {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${userId}/requests`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });

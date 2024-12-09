@@ -29,7 +29,7 @@ const SearchBar = () => {
 
     try {
       const response = await fetch(
-          `http://localhost:3001/group/search?username=${searchQuery}&groupname=${searchQuery}`,
+          `${import.meta.env.VITE_PORT_BACKEND}/group/search?username=${searchQuery}&groupname=${searchQuery}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },

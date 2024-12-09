@@ -44,7 +44,7 @@ const UserListItem = ({ friendId, name, subtitle, userPicturePath, onClickAction
           Authorization: `Bearer ${token}`,
         },
       };
-      const { data } = await axios.post(`http://localhost:3001/chat`, { userId }, config);
+      const { data } = await axios.post(`${import.meta.env.VITE_PORT_BACKEND}/chat`, { userId }, config);
       console.log(data);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);

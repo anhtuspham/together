@@ -48,7 +48,7 @@ import {
         formData.append("picturePath", image.name);
       }
   
-      const response = await fetch(`http://localhost:3001/posts`, {
+      const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/posts`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

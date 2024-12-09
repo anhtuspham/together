@@ -12,7 +12,7 @@ const AdminGroups = ({ userId }) => {
     useEffect(() => {
         const fetchGroups = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/group/${userId}/admin`, {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${userId}/admin`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -34,7 +34,7 @@ const AdminGroups = ({ userId }) => {
         const fetchRequests = async (groupId) => {
             try {
                 const response = await fetch(
-                    `http://localhost:3001/group/${groupId}/${userId}/get-request`,
+                    `${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${userId}/get-request`,
                     {
                         method: "GET",
                         headers: { Authorization: `Bearer ${token}` },
@@ -56,7 +56,7 @@ const AdminGroups = ({ userId }) => {
     const handleAcceptRequest = async (groupId, userId) => {
         try {
             const response = await fetch(
-                `http://localhost:3001/group/${groupId}/requests/${userId}/${currentUserId}/accept`,
+                `${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/requests/${userId}/${currentUserId}/accept`,
                 {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` },
@@ -73,7 +73,7 @@ const AdminGroups = ({ userId }) => {
     const handleRejectRequest = async (groupId, userId) => {
         try {
             const response = await fetch(
-                `http://localhost:3001/group/${groupId}/requests/${userId}/${currentUserId}/reject`,
+                `${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/requests/${userId}/${currentUserId}/reject`,
                 {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` },

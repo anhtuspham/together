@@ -13,7 +13,7 @@ const GroupRequests = ({ groupId }) => {
         const checkAdminStatus = async () => {
             try {
                 console.log('group Id: ', groupId)
-                const response = await fetch(`http://localhost:3001/group/${groupId}/${currentUserId}/status`, {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/status`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const GroupRequests = ({ groupId }) => {
 
         const fetchRequests = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/group/${groupId}/${currentUserId}/get-request`, {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/get-request`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ const GroupRequests = ({ groupId }) => {
     const handleApprove = async (userId) => {
         try {
             const response = await fetch(
-                `http://localhost:3001/group/${groupId}/requests/${userId}/${currentUserId}/accept`,
+                `${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/requests/${userId}/${currentUserId}/accept`,
                 {
                     method: "POST",
                     headers: {
@@ -78,7 +78,7 @@ const GroupRequests = ({ groupId }) => {
     const handleDeny = async (userId) => {
         try {
             const response = await fetch(
-                `http://localhost:3001/groups/${groupId}/requests/${userId}/${currentUserId}/reject`,
+                `${import.meta.env.VITE_PORT_BACKEND}/groups/${groupId}/requests/${userId}/${currentUserId}/reject`,
                 {
                     method: "POST",
                     headers: {

@@ -38,7 +38,7 @@ const AdminPage = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://localhost:3001/admin/all-user", {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/all-user`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
             const data = await response.json();
@@ -50,7 +50,7 @@ const AdminPage = () => {
 
     const fetchPosts = async () => {
         try {
-            const response = await fetch("http://localhost:3001/admin/all-post", {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/all-post`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
             const data = await response.json();
@@ -62,7 +62,7 @@ const AdminPage = () => {
 
     const fetchGroups = async () => {
         try {
-            const response = await fetch("http://localhost:3001/admin/all-group", {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/all-group`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
             const data = await response.json();
@@ -75,7 +75,7 @@ const AdminPage = () => {
     // Delete a user
     const deleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:3001/admin/delete/${userId}`, {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/delete/${userId}`, {
                 method: "DELETE",
                 headers: {Authorization: `Bearer ${token}`},
             });
@@ -90,7 +90,7 @@ const AdminPage = () => {
     // Delete a post
     const deletePost = async (postId) => {
         try {
-            const response = await fetch(`http://localhost:3001/admin/delete/${postId}`, {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/delete/${postId}`, {
                 method: "DELETE",
                 headers: {Authorization: `Bearer ${token}`},
             });
@@ -104,7 +104,7 @@ const AdminPage = () => {
 
     const deleteGroup = async (groupId) => {
         try {
-            const response = await fetch(`http://localhost:3001/admin/delete/${groupId}`, {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/delete/${groupId}`, {
                 method: "DELETE",
                 headers: {Authorization: `Bearer ${token}`},
             });
@@ -119,7 +119,7 @@ const AdminPage = () => {
     // Handle role change
     const handleRoleChange = async (userId, newRole) => {
         try {
-            const response = await fetch(`http://localhost:3001/admin/update-role/${userId}`, {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/admin/update-role/${userId}`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,

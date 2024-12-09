@@ -8,7 +8,7 @@ const GroupList = () => {
 
     const fetchGroups = async () => {
         try {
-            const response = await fetch("http://localhost:3001/group/get-group", {
+            const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/get-group`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

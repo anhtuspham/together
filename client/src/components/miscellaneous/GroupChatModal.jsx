@@ -89,7 +89,7 @@ const GroupChatModal = ({ children }) => {
         },
       };
       const { data } = await axios.post(
-        `http://localhost:3001/chat/group`,
+        `${import.meta.env.VITE_PORT_BACKEND}/chat/group`,
         {
           name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),

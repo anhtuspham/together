@@ -34,7 +34,7 @@ const ChatSearchBar = ({helpertext, onClickAction, handleGroup, handleAddUser}) 
     try {
       // Perform the search action with the searchQuery value
       const response = await fetch(
-        `http://localhost:3001/users/search?username=${searchQuery}`,
+        `${import.meta.env.VITE_PORT_BACKEND}/users/search?username=${searchQuery}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },

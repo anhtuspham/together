@@ -32,7 +32,7 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
             },
         };
 
-        const { data } = await axios.get("http://localhost:3001/chat", config);
+        const { data } = await axios.get(`${import.meta.env.VITE_PORT_BACKEND}/chat`, config);
         console.log(data);
         setChats(data);
         } catch (error) {

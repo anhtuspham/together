@@ -23,7 +23,7 @@ import "./styles.css";
 
 
 import io from "socket.io-client";
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = `${import.meta.env.VITE_PORT_BACKEND}`;
 let socket, selectedChatCompare;
 
 const ChatDetail = ({fetchAgain, setFetchAgain}) => {
@@ -59,7 +59,7 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `http://localhost:3001/message/${selectedChat._id}`,
+        `${import.meta.env.VITE_PORT_BACKEND}/message/${selectedChat._id}`,
         config
       );
 
@@ -88,7 +88,7 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
         };
         setNewMessage("");
         const { data } = await axios.post(
-          "http://localhost:3001/message",
+          `${import.meta.env.VITE_PORT_BACKEND}/message`,
           {
             content: newMessage,
             chatId: selectedChat,

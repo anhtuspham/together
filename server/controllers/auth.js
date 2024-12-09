@@ -51,7 +51,7 @@ export const register = async (req, res) => {
         // hash password
         const token = jwt.sign({id: newUser._id}, process.env.JWT_VERIFY_MAIL, {expiresIn: "1h"});
 
-        const verificationLink = `http://localhost:3001/auth/verify-email?token=${token}`;
+        const verificationLink = `${import.meta.env.VITE_PORT_BACKEND}/auth/verify-email?token=${token}`;
         await sendEmail(
             email,
             "Xác thực tài khoản",

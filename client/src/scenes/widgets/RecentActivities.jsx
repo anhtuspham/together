@@ -9,7 +9,7 @@ const RecentActivities = () => {
     useEffect(() => {
         const fetchActivities = async () => {
             try {
-                const response = await fetch("http://localhost:3001/users/get/all-activities", {
+                const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/users/get/all-activities`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

@@ -19,7 +19,8 @@ import {
     Button
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {showNotification} from "../../state/notificationSlice.js";
 
 const AdminPage = () => {
     const token = useSelector((state) => state.auth.token);
@@ -29,6 +30,7 @@ const AdminPage = () => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [editingUserId, setEditingUserId] = useState(null);
     const [newRole, setNewRole] = useState("");
+    const dispatch = useDispatch();
 
     useEffect(() => {
         fetchUsers();
@@ -81,6 +83,19 @@ const AdminPage = () => {
             });
             if (response.ok) {
                 setUsers(users.filter(user => user._id !== userId));
+                dispatch(
+                    showNotification({
+                        message: "Đã xóa thành công!",
+                        type: "success",
+                    })
+                );
+            } else {
+                dispatch(
+                    showNotification({
+                        message: "Xóa thất bại!",
+                        type: "error",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error deleting user:", error);
@@ -96,6 +111,19 @@ const AdminPage = () => {
             });
             if (response.ok) {
                 setPosts(posts.filter(post => post._id !== postId));
+                dispatch(
+                    showNotification({
+                        message: "Đã xóa bài viết!",
+                        type: "success",
+                    })
+                );
+            } else {
+                dispatch(
+                    showNotification({
+                        message: "Xóa thất bại!",
+                        type: "error",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error deleting post:", error);
@@ -110,6 +138,19 @@ const AdminPage = () => {
             });
             if (response.ok) {
                 setGroups(groups.filter(group => group._id !== groupId));
+                dispatch(
+                    showNotification({
+                        message: "Đã xóa nhóm!",
+                        type: "success",
+                    })
+                );
+            } else {
+                dispatch(
+                    showNotification({
+                        message: "Xóa thất bại!",
+                        type: "error",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error deleting group:", error);
@@ -129,11 +170,23 @@ const AdminPage = () => {
             });
 
             if (response.ok) {
-                // Cập nhật danh sách người dùng trong state
                 setUsers(users.map(user =>
                     user._id === userId ? {...user, role: newRole} : user
                 ));
-                setEditingUserId(null); // Thoát khỏi chế độ chỉnh sửa
+                setEditingUserId(null);
+                dispatch(
+                    showNotification({
+                        message: "Cập nhật thành công!",
+                        type: "success",
+                    })
+                );
+            } else {
+                dispatch(
+                    showNotification({
+                        message: "Cập nhật thất bại!",
+                        type: "success",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error updating user role:", error);

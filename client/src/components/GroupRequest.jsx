@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {Box, Typography, Button} from "@mui/material";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {toast, ToastContainer} from "react-toastify";
+import {showNotification} from "../state/notificationSlice.js";
 
 const GroupRequests = ({groupId}) => {
     const [requests, setRequests] = useState([]);
     const token = useSelector((state) => state.auth.token);
     const [isAdmin, setIsAdmin] = useState(false);
     const currentUserId = useSelector((state) => state.auth.user._id);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const dispatch = useDispatch();
 
 
     useEffect(() => {
@@ -69,6 +69,12 @@ const GroupRequests = ({groupId}) => {
 
             if (response.ok) {
                 setRequests((prev) => prev.filter((req) => req._id !== userId));
+                dispatch(
+                    showNotification({
+                        message: "Đã đồng ý!",
+                        type: "success",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error approving request:", error);
@@ -89,6 +95,12 @@ const GroupRequests = ({groupId}) => {
 
             if (response.ok) {
                 setRequests((prev) => prev.filter((req) => req._id !== userId));
+                dispatch(
+                    showNotification({
+                        message: "Đã từ chối!",
+                        type: "success",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error denying request:", error);
@@ -98,8 +110,6 @@ const GroupRequests = ({groupId}) => {
     if (!isAdmin) {
         return <Typography variant="body2"></Typography>;
     }
-
-    const notify = () => toast("Wow so easy!");
 
     return (
         <Box>
@@ -116,8 +126,6 @@ const GroupRequests = ({groupId}) => {
                                 Xóa
                             </Button>
                         </Box>
-                        <Button onClick={notify}>Notify!</Button>
-                        <ToastContainer/>
                     </Box>
 
                 ))

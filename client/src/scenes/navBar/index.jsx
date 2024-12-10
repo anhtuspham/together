@@ -65,7 +65,6 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  //Allows us to use theme settings that we defined in Theme file 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -85,13 +84,12 @@ const Navbar = () => {
       const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/notification/${userId}`);
       const data = await response.json();
       console.log('data: ', data)
-      return data; // Giả sử API trả về một mảng notifications
+      return data;
     } catch (error) {
       console.error('Error fetching notifications', error);
     }
   };
   const handleMarkAsRead = async (notifId) => {
-    // Gửi request để đánh dấu notification là đã đọc
     try {
       await fetch(`${import.meta.env.VITE_PORT_BACKEND}/notification/${notifId}/read`, {
         method: 'POST',

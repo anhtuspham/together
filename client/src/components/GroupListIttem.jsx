@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {Box, Typography, Avatar, Button, Snackbar} from "@mui/material";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {showNotification} from "../state/notificationSlice.js";
 
-const GroupListItem = ({ groupId, name, description, picturePath }) => {
+const GroupListItem = ({groupId, name, description, picturePath}) => {
     const [isJoined, setIsJoined] = useState(false);
     const currentUserId = useSelector((state) => state.auth.user._id);
     const [isAdmin, setIsAdmin] = useState(false);
     const token = useSelector((state) => state.auth.token);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const dispatch = useDispatch();
 
     const handleSnackbarClose = () => {
         setOpenSnackbar(false);
@@ -37,7 +39,6 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
         checkMembership();
     }, [groupId, token]);
 
-    // Hàm xử lý tham gia nhóm
     const handleJoinGroup = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/join`, {
@@ -50,12 +51,19 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
 
             if (response.ok) {
                 setIsJoined(true);
+                dispatch(
+                    showNotification({
+                        message: "Đã gửi yêu cầu!",
+                        type: "success",
+                    })
+                );
             } else {
-                console.error("Failed to join group");
-            }
-            if(response.status === 201 || response.status === 200){
-                setOpenSnackbar(true);
-                setSnackbarMessage('Yêu cầu thành công')
+                dispatch(
+                    showNotification({
+                        message: "Không thể vào nhóm",
+                        type: "error",
+                    })
+                );
             }
         } catch (error) {
             console.error("Error joining group:", error);
@@ -68,7 +76,7 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
                 <Avatar
                     src={`${import.meta.env.VITE_PORT_BACKEND}${picturePath}`}
                     alt={name}
-                    sx={{ width: 40, height: 40 }}
+                    sx={{width: 40, height: 40}}
                 />
             )}
             <Box flex="1">

@@ -23,6 +23,7 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "../../components/FlexBetween";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {showNotification} from "../../state/notificationSlice.js";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("Required"),
@@ -95,20 +96,43 @@ const Form = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
+        if(response.status === 400){
+          dispatch(
+              showNotification({
+                message: "Email đã tồn tại!",
+                type: "error",
+              })
+          );
+        } else {
+          dispatch(
+              showNotification({
+                message: "Đăng kí thất bại!",
+                type: "error",
+              })
+          );
+        }
         throw new Error(errorData.message || "Đăng ký thất bại.");
+      } else {
+        dispatch(
+            showNotification({
+              message: "Đăng kí thành công!",
+              type: "success",
+            })
+        );
+
+        const savedUser = await response.json();
+
+        // Reset form
+        onSubmitProps.resetForm();
+
+        if (savedUser) {
+          setPageType("login");
+        }
       }
 
-      const savedUser = await response.json();
-
-      // Reset form
-      onSubmitProps.resetForm();
-
-      if (savedUser) {
-        setPageType("login");
-      }
     } catch (error) {
       console.error("Đăng ký thất bại:", error.message);
-      alert(error.message);
+      // alert(error.message);
     }
   };
 
@@ -126,7 +150,6 @@ const Form = () => {
       } else {
         setLoginError(false); // Reset login error to false
         // onSubmitProps.resetForm();
-        console.log('Set login: ',loggedIn)
         dispatch(
           setLogin({
             user: loggedIn.user,
@@ -134,9 +157,21 @@ const Form = () => {
           })
         );
         navigate("/home");
+        dispatch(
+            showNotification({
+              message: "Đăng nhập thành công!",
+              type: "success",
+            })
+        );
       }
     } catch (error) {
       console.log("Error:", error);
+      dispatch(
+          showNotification({
+            message: "Lỗi đăng nhập!",
+            type: "error",
+          })
+      );
     } finally {
       onSubmitProps.setSubmitting(false); // Manually set submitting to false
     }
@@ -384,8 +419,6 @@ const Form = () => {
                     label="Password"
                 />
               </FormControl></>)}
-
-
           </Box>
 
           {/* BUTTONS */}

@@ -26,7 +26,6 @@ const SavedPage = () => {
           Authorization: `Bearer ${token}`, // Replace token with the actual user token
         },
       });
-      console.log(response.data);
       setSavedPosts(response.data);
     } catch (error) {
       console.error(error);
@@ -46,17 +45,16 @@ const SavedPage = () => {
 
     const responses = await axios.all(requests);
     const fetchedPosts = responses.map((response) => response.data[0]);
-    console.log('Fetched Posts:', fetchedPosts);
+
     const fetchedPostsWithCategory = fetchedPosts.map((fetchedPost) => {
         const savedPost = savedPosts.find((post) => post.postId === fetchedPost._id);
-        console.log('Saved Post:', savedPost); 
+
         if (savedPost) {
           return { ...fetchedPost, category: savedPost.category };
         }
         return fetchedPost;
       });
 
-    console.log("abc", fetchedPostsWithCategory);
     setFetchedPosts(fetchedPostsWithCategory);
 
 

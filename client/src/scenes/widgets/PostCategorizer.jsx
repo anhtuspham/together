@@ -3,7 +3,8 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {showNotification} from "../../state/notificationSlice.js";
 
 const PostCategorizer = ({
   postId,
@@ -17,8 +18,8 @@ const PostCategorizer = ({
   comments,
 }) => {
   const [category, setCategory] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
   // const {_id} = useSelector((state) => state.auth.user);
   // const userId = _id;
 
@@ -39,21 +40,29 @@ const PostCategorizer = ({
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Replace token with the actual user token
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      if (response.status === 201) {
-        setOpenSnackbar(true);
+      if(response.ok){
+        dispatch(
+            showNotification({
+              message: "Đã lưu!",
+              type: "success",
+            })
+        );
+      } else {
+        dispatch(
+            showNotification({
+              message: "Có lỗi khi lưu!",
+              type: "error",
+            })
+        );
       }
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
   };
 
   return (
@@ -71,12 +80,6 @@ const PostCategorizer = ({
           Save
         </Button>
       </Box>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message='Post saved!'
-      />
     </Box>
   );
 };

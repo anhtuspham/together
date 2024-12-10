@@ -102,11 +102,11 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                 throw new Error("Failed to send friend request");
             }
 
-            const data = await response.json();
-            await fetchFriendStatus();
-            await getSentFriendsRequest();
-            await getReceivedFriendsRequest();
             if (response.ok) {
+                await fetchFriendStatus();
+                await getSentFriendsRequest();
+                await getReceivedFriendsRequest();
+
                 dispatch(
                     showNotification({
                         message: "Đã gửi lời mời!",

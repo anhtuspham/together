@@ -126,7 +126,7 @@ export const removeFriend = async (req, res) => {
 
         const updatedFriends = await User.find({_id: {$in: user.friends}}).select("_id firstName lastName occupation location picturePath");
 
-        res.status(200).json({message: "Delete successfully", updatedFriends});
+        res.status(201).json({message: "Delete successfully", updatedFriends});
 
 
     } catch (err) {
@@ -225,7 +225,7 @@ export const acceptFriendRequest = async (req, res) => {
 
         await notification.save();
 
-        return res.status(200).json({message: "Friend request accepted successfully"});
+        return res.status(201).json({message: "Friend request accepted successfully"});
     } catch (error) {
         console.error("Error accepting friend request:", error);
         return res.status(500).json({message: "Could not accept friend request"});
@@ -250,7 +250,7 @@ export const rejectFriendRequest = async (req, res) => {
 
         await Friendship.deleteOne({senderId: friendId, receiverId: userId});
 
-        return res.status(200).json({message: "Friend request rejected successfully"});
+        return res.status(201).json({message: "Friend request rejected successfully"});
     } catch (error) {
         console.error("Error accepting friend request:", error);
         return res.status(500).json({message: "Could not reject friend request"});

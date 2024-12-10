@@ -20,7 +20,7 @@ import {
     Button,
     TextField,
     FormControlLabel,
-    RadioGroup, Modal, FormControl, FormLabel, Radio
+    RadioGroup, Modal, FormControl, FormLabel, Radio, Snackbar
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {Menu, MenuItem} from '@mui/material';
@@ -51,6 +51,8 @@ const PostWidget = ({
     const [selectedReason, setSelectedReason] = useState("");
     const [reportModalOpen, setReportModalOpen] = useState(false);
     const currentUserId = useSelector((state) => state.user._id);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
 
     const open = Boolean(anchorEl);
@@ -91,15 +93,23 @@ const PostWidget = ({
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
 
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
+    };
+
     const handleDeletePost = async () => {
         try {
-            await axios.delete(`${port}/posts/${postId}`, {
+            const response = await axios.delete(`${port}/posts/${postId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             dispatch(deletePost({postId}))
             // dispatch(setPost({postId}));
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Xóa bài viết thành công')
+            }
         } catch (error) {
             console.error("Failed to delete post", error);
         }
@@ -119,6 +129,11 @@ const PostWidget = ({
             );
             dispatch(setPost({post: response.data}));
             setIsEditMode(false);
+
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Cập nhật bài viết thành công')
+            }
         } catch (error) {
             console.error("Failed to update post", error);
         }
@@ -135,6 +150,7 @@ const PostWidget = ({
         });
         const updatedPost = await response.json();
         dispatch(setPost({post: updatedPost}));
+
     };
 
 
@@ -159,6 +175,10 @@ const PostWidget = ({
             const data = await response.json();
             setLoadComments((prevComments) => [...prevComments, data.newComment]);
             setNewComment('');
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Thêm bình luận thành công')
+            }
         } catch (error) {
             console.error(error);
         }
@@ -191,6 +211,11 @@ const PostWidget = ({
             );
             setIsEditMode(false);
             setNewComment('');
+
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Cập nhật thành công')
+            }
         } catch (error) {
             console.error("Failed to update post", error);
         }
@@ -220,6 +245,11 @@ const PostWidget = ({
             });
             console.log('data: ', response)
             // dispatch(setPost({ post: response.data }));
+
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Báo cáo thành công')
+            }
         } catch (error) {
             console.error("Failed to report post", error);
         }
@@ -520,6 +550,12 @@ const PostWidget = ({
                                      comments={comments}
                     />}
             </Box>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
         </WidgetWrapper>
     );
 };

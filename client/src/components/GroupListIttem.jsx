@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Box, Typography, Avatar, Button } from "@mui/material";
+import {Box, Typography, Avatar, Button, Snackbar} from "@mui/material";
 import { useSelector } from "react-redux";
 
 const GroupListItem = ({ groupId, name, description, picturePath }) => {
@@ -7,6 +7,12 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
     const currentUserId = useSelector((state) => state.user._id);
     const [isAdmin, setIsAdmin] = useState(false);
     const token = useSelector((state) => state.token);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
+    };
 
     useEffect(() => {
         const checkMembership = async () => {
@@ -43,9 +49,13 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
             });
 
             if (response.ok) {
-                setIsJoined(true); // Cập nhật trạng thái tham gia
+                setIsJoined(true);
             } else {
                 console.error("Failed to join group");
+            }
+            if(response.status === 201 || response.status === 200){
+                setOpenSnackbar(true);
+                setSnackbarMessage('Yêu cầu thành công')
             }
         } catch (error) {
             console.error("Error joining group:", error);
@@ -75,6 +85,12 @@ const GroupListItem = ({ groupId, name, description, picturePath }) => {
                     {isJoined ? "Đã tham gia" : "Tham gia"}
                 </Button>
             )}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
         </Box>
     );
 };

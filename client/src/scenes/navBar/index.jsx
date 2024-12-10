@@ -100,7 +100,6 @@ const Navbar = () => {
         },
       });
 
-      // Cập nhật lại state để đánh dấu là đã đọc
       setNotifications(notifications.map((notif) =>
           notif._id === notifId ? { ...notif, isRead: true } : notif
       ));

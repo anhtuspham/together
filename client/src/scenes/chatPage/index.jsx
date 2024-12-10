@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from "../../scenes/navBar";
-import { Box, Paper, Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { useSelector } from "react-redux";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ChatList from '../../components/ChatList';
@@ -13,24 +13,49 @@ const ChatPage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
 
   return (
-    <Box>
-      <Navbar />
-      <Box mx={2} my={2}>
-        <Grid container spacing={2} style={{ height: '100%' }}>
-          <Grid item xs={12} md={4} style={{ flex: '0 0 30%' }}> 
-            <ChatList
-              fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}
-            />
-          </Grid>
-          <Grid item xs={12} md={8} style={{ flex: '0 0 68%' }}> 
-            <ChatDetail  fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-          </Grid>
-        </Grid>
+      <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Navbar */}
+        <Navbar />
+
+        {/* Content */}
+        <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              height: '100%',
+              padding: isNonMobileScreens ? '16px 32px' : '8px 16px',
+              gap: '16px',
+              overflow: 'hidden',
+            }}
+        >
+          {/* Chat List */}
+          <Box
+              sx={{
+                flex: 1,
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                overflowY: 'auto',
+                boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+              }}
+          >
+            <ChatList fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+          </Box>
+
+          {/* Chat Detail */}
+          <Box
+              sx={{
+                flex: 2,
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                overflowY: 'auto',
+                boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+              }}
+          >
+            <ChatDetail fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+          </Box>
+        </Box>
       </Box>
-    </Box>
   );
-}
+};
 
 export default ChatPage;
-
-

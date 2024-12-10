@@ -17,7 +17,7 @@ const ChatList = ({fetchAgain, setFetchAgain}) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'start',
         padding: '20px',
         width: '100%',
         height: '100%',
@@ -25,7 +25,7 @@ const ChatList = ({fetchAgain, setFetchAgain}) => {
     >
       <Typography
         fontWeight="bold"
-        fontSize="clamp(1rem, 1.5rem, 2.25rem)"
+        fontSize="clamp(2.5rem, 1.5rem, 2.25rem)"
         color="primary"
         align="center"
         sx={{ marginTop: '10px', mb: "15px" }}

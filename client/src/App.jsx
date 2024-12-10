@@ -22,7 +22,7 @@ function App() {
 
     const dispatch = useDispatch();
 
-    const mode = useSelector((state) => state.mode);
+    const mode = useSelector((state) => state.auth.mode);
     const token = useSelector((state) => state.auth.token);
     const isAuth = Boolean(token);
     let isAdmin = false;

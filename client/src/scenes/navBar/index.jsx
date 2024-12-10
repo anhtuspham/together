@@ -106,7 +106,6 @@ const Navbar = () => {
     }
   };
 
-
   const handleNotificationClick = () => {
     setIsNotificationPopupOpen(true);
   };
@@ -114,8 +113,6 @@ const Navbar = () => {
   const handleClosePopup = () => {
     setIsNotificationPopupOpen(false);
   };
-
-
 
   useEffect(() => {
     const getNotifications = async () => {

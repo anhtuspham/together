@@ -1,146 +1,140 @@
-import { Box, Divider, Typography, useTheme, Button, Stack } from "@mui/material";
-import { useToast } from "@chakra-ui/toast";
+import {
+    Box,
+    Divider,
+    Typography,
+    Button,
+    Stack,
+    useTheme,
+} from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { ChatState } from "../Context/ChatProvider";
-import { useSelector } from "react-redux";
 import WidgetWrapper from "./WidgetWrapper";
-import { Add, GroupAdd } from "@mui/icons-material";
+import { GroupAdd } from "@mui/icons-material";
 import ChatLoading from "./miscellaneous/ChatLoading";
-import {getSender } from "../config/ChatLogics";
-import UserListItem from "./UserListItem";
+import { getSender } from "../config/ChatLogics";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
+import { showNotification } from "../state/notificationSlice";
 
 const UserChats = ({ fetchAgain, setFetchAgain }) => {
-
-    // const [loggedUser, setLoggedUser] = useState();
-    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+    const { selectedChat, setSelectedChat, chats, setChats } = ChatState();
     const loggedUser = useSelector((state) => state.auth.user);
     const token = useSelector((state) => state.auth.token);
     const { palette } = useTheme();
-    const primaryLight = palette.primary.light;
-    const primaryDark = palette.primary.dark;
-
-    const toast = useToast();
+    const dispatch = useDispatch();
 
     const fetchChats = async () => {
-        // console.log(user._id);
         try {
-        const config = {
-            headers: {
-            Authorization: `Bearer ${token}`,
-            },
-        };
-
-        const { data } = await axios.get(`${import.meta.env.VITE_PORT_BACKEND}/chat`, config);
-        console.log(data);
-        setChats(data);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const { data } = await axios.get(
+                `${import.meta.env.VITE_PORT_BACKEND}/chat`,
+                config
+            );
+            setChats(data);
         } catch (error) {
-        toast({
-            title: "Error Occured!",
-            description: "Failed to Load the chats",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom-left",
-        });
+            dispatch(
+                showNotification({
+                    message: "Có lỗi khi tải danh sách chat!",
+                    type: "error",
+                })
+            );
         }
     };
-    
+
     useEffect(() => {
-        // setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         fetchChats();
-        // eslint-disable-next-line
     }, [fetchAgain]);
 
-
     return (
+        <WidgetWrapper
+            sx={{
+                width: { xs: "100%", md: "70%%" },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                height: "100%",
+                overflow: "hidden",
+                padding: "16px",
+            }}
+        >
             <Box
-                d={{ base: selectedChat ? "none" : "flex", md: "flex" }}
-                flexdir="column"
-                alignItems="center" 
-                p={2}
-                // bg="white"
-                w={{ base: "100%", md: "31%" }}
-                borderRadius="lg"
-                borderWidth="1px"
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                }}
             >
-                <Box
-                    pb={2}
-                    px={1}
-                    fontSize={{ base: "28px", md: "30px" }}
-                    d="flex"
-                    w="100%"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <Typography 
+                <Typography
                     fontWeight="bold"
-                    fontSize="clamp(0.5rem, 1rem, 2.25rem)"
-                    color="primary"
-                    align="center"
-                    sx={{marginBottom: '5px' }}
-                    >
-                    Kênh chat của bạn
-                    </Typography>
-                    <Divider />
-                     <Box
-                        d="flex"
-                        flexdir="column"
-                        p={3}
-                        bg="#F8F8F8"
-                        w="100%"
-                        h="100%"
-                        borderRadius="lg"
-                        overflowy="hidden"
-                    >
-                        {chats ? (
-                            <Stack overflowy="scroll">
-                                {chats.map((chat) => (
-                                     <Box
-                                        onClick={() => setSelectedChat(chat)}
-                                        cursor="pointer"
-                                        sx={{
-                                            // backgroundColor: selectedChat === chat ? "#38B2AC" : "#E8E8E8"
-                                            backgroundColor: selectedChat === chat ? "#00e5ff" : "#E8E8E8",
-                                            margin: "10px"
-                                        }}
-                                        color=" #4A4A4A"
-                                        px={1}
-                                        py={1}
-                                        borderRadius="lg"
-                                        key={chat._id}
-                                    >
-                                         <Typography fontWeight="bold">
-                                            {!chat.isGroupChat
-                                                ? getSender(loggedUser, chat.users)
-                                                : chat.chatName}
-                                        </Typography>  
-                                    </Box>
-                                ))}
-                            </Stack>
-                        
-                        ) : (
-                        <ChatLoading />
-                        )}
-                    </Box>
-                    <Divider />
-                    <GroupChatModal>
-                        <Button 
-                        variant="contained" 
-                        endIcon={<GroupAdd/>}
-                        sx={{ml: "20px"}}
-                        >
-                            Thêm nhóm chat mới
-                        </Button>
-                    </GroupChatModal>
-                    
-                </Box>   
+                    fontSize="1.5rem"
+                    color={palette.primary.main}
+                >
+                    Kênh Chat Của Bạn
+                </Typography>
             </Box>
+            <Divider sx={{ width: "100%", marginBottom: "16px" }} />
 
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    width: "100%",
+                    borderRadius: "8px",
+                    overflowY: "auto",
+                    backgroundColor: "#F8F8F8",
+                    padding: "16px",
+                    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                }}
+            >
+                {chats ? (
+                    <Stack spacing={2}>
+                        {chats.map((chat) => (
+                            <Box
+                                key={chat._id}
+                                onClick={() => setSelectedChat(chat)}
+                                sx={{
+                                    cursor: "pointer",
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    backgroundColor:
+                                        selectedChat === chat ? palette.primary.main : "#dcdbdb",
+
+                                }}
+                            >
+                                <Typography fontWeight="bold">
+                                    {!chat.isGroupChat
+                                        ? getSender(loggedUser, chat.users)
+                                        : chat.chatName}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Stack>
+                ) : (
+                    <ChatLoading />
+                )}
+            </Box>
+            <Divider sx={{ width: "100%", marginY: "16px" }} />
+
+            <GroupChatModal>
+                <Button
+                    variant="contained"
+                    endIcon={<GroupAdd />}
+                    sx={{
+                        alignSelf: "flex-end",
+                        backgroundColor: palette.primary.main,
+                    }}
+                >
+                    Thêm Nhóm Chat Mới
+                </Button>
+            </GroupChatModal>
+        </WidgetWrapper>
     );
-    
-
 };
 
 export default UserChats;

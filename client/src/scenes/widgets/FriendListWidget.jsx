@@ -35,7 +35,7 @@ const FriendListWidget = ({userId}) => {
                 fontWeight="500"
                 sx={{mb: "1.5rem"}}
             >
-                Friend List
+                Danh sách bạn bè
             </Typography>
             <Box display="flex" flexDirection="column" gap="1.5rem">
                 {friends && Array.isArray(friends) && friends.length > 0 ?

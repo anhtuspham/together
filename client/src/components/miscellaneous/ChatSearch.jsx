@@ -28,18 +28,15 @@ import SearchBar from "components/SearchBar";
 
 const ChatSearch = () => {
 
-  //Used to toggle navbar menu in mobile screen  
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   // const {user, _id, picturePath} = useSelector((state) => state.auth.user);
 
-  //Hook in Material UI that allows to determine whether current screen size is 
   // below this min-width or higher than it
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
-  //Allows us to use theme settings that we defined in Theme file 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;

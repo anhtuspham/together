@@ -328,6 +328,7 @@ const PostWidget = ({
         <WidgetWrapper m="2rem 0">
             <FlexBetween>
                 <Friend
+                    key={postUserId}
                     friendId={postUserId}
                     name={name}
                     subtitle={location}

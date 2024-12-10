@@ -173,7 +173,7 @@ const ChatDetail = ({fetchAgain, setFetchAgain}) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'start',
         padding: '20px',
         width: '100%',
         height: '100%',

@@ -15,9 +15,6 @@ export const accessChat = async (req, res) => {
     return res.sendStatus(400);
   }
 
-  //$elemMatch basically matches the element of an array
-  //$eq means equal to
-  //.populate("users", "-password") means populate with user info except password
   var isChat = await Chat.find({
     isGroupChat: false,
     $and: [
@@ -56,38 +53,12 @@ export const accessChat = async (req, res) => {
   }
 }
 
-//@description     Fetch all chats for a user
-//@route           GET /api/chat/
-//@access          Protected
-// export const fetchChats = async (req, res) => {
-//   try {
-//    Chat.find({
-//       $or: [
-//         { users: { $elemMatch: { $eq: req.user._id } } },
-//         { isGroupChat: true, "groupAdmin": req.user._id }
-//       ]
-//     })
-//       .populate("users", "-password")
-//       .populate("groupAdmin", "-password")
-//       .populate("latestMessage")
-//       .sort({ updatedAt: -1 })
-//       .then(async (results) => {
-//         results = await User.populate(results, {
-//           path: "latestMessage.sender",
-//           select: "firstName lastName picturePath email",
-//         });
-//         res.status(200).send(results);
-//       });
-//   } catch (err) {
-//     res.status(400).json({message: err.message});
-//   }
-// }
 export const fetchChats = async (req, res) => {
   try {
     const results = await Chat.find({ 
       $or: [
-        { users: { $elemMatch: { $eq: req.user.id } } }, // Individual chats where user is involved
-        { isGroupChat: true, users: { $elemMatch: { $eq: req.user.id } } }, // Group chats where user is a member
+        { users: { $elemMatch: { $eq: req.user.id } } },
+        { isGroupChat: true, users: { $elemMatch: { $eq: req.user.id } } },
       ],
       })
       .populate("users", "-password")
@@ -95,9 +66,6 @@ export const fetchChats = async (req, res) => {
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
 
-      // console.log(results); 
-
-    // If you want to populate the latestMessage.sender field as well
     await User.populate(results, {
       path: "latestMessage.sender",
       select: "firstName lastName picturePath email",
@@ -110,67 +78,6 @@ export const fetchChats = async (req, res) => {
 };
 
 
-// //@description     Create New Group Chat
-// //@route           POST /api/chat/group
-// //@access          Protected
-// export const createGroupChat = async (req, res) => {
-
-//   console.log("Hello");
-//   console.log(req.body);
-
-//   if (!req.body.users || !req.body.name) {
-//     return res.status(400).send({ message: "Please Fill all the feilds" });
-//   }
-
-//   var users = JSON.parse(req.body.users);
-//   console.log(users);
-
-//   // Convert user IDs from strings to MongoDB ObjectId
-//   const userObjectIds = users.map((userId) => new mongoose.Types.ObjectId(userId));
-
-//   // Add the current user's ObjectId to the array
-//   userObjectIds.push(new mongoose.Types.ObjectId(req.user._id));
-
-//   // var users = req.body.users;
-//   // let users = req.body.users; // Ensure that req.body.users is a JSON string
-//   // if (typeof users === "string") {
-//   //   users = JSON.parse(users); // Convert JSON string to array
-//   // }
-
-//   // if (!Array.isArray(users)) {
-//   //   return res
-//   //     .status(400)
-//   //     .send({ message: "Invalid users data. Expecting an array of user IDs." });
-//   // }
-
-//   if (users.length < 2) {
-//     return res
-//       .status(400)
-//       .send("More than 2 users are required to form a group chat");
-//   }
-
-//   // users.push(req.user);
-
-//   try {
-//     const groupChat = await Chat.create({
-//       chatName: req.body.name,
-//       users: userObjectIds,
-//       isGroupChat: true,
-//       groupAdmin: new mongoose.Types.ObjectId(req.user),
-//     });
-
-//     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
-//       .populate("users", "-password")
-//       .populate("groupAdmin", "-password");
-
-//     res.status(200).json(fullGroupChat);
-//   } catch (err) {
-//     res.status(400).json({message: err.message});
-//   }
-// };
-
-
-
 export const createGroupChat = async (req, res) => {
   const { users, name } = req.body;
   console.log(req.body);
@@ -180,10 +87,6 @@ export const createGroupChat = async (req, res) => {
   }
 
   const userObjectIds = JSON.parse(users).map((userId) => new mongoose.Types.ObjectId(userId));
-
-  // Add the current user's ObjectId to the array
-  // userObjectIds.push(new mongoose.Types.ObjectId(req.user._id));
-  // console.log(userObjectIds);
 
   try {
     const groupChat = await Chat.create({

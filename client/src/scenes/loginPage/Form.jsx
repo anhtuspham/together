@@ -115,7 +115,7 @@ const Form = () => {
       } else {
         dispatch(
             showNotification({
-              message: "Đăng kí thành công!",
+              message: "Đăng kí thành công, hãy vào email để xác thực tài khoản của bạn!",
               type: "success",
             })
         );

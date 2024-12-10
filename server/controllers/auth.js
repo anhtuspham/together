@@ -8,10 +8,10 @@ import transporter from "nodemailer/lib/mailer/index.js";
 
 
 //-------------------------Register User---------------------------------------
-//the call will be async as it takes time to fetch data from database
+
 export const register = async (req, res) => {
     try {
-        //This object has all the registration details sent from frontend form
+
         const {
             firstName,
             lastName,
@@ -28,12 +28,10 @@ export const register = async (req, res) => {
             return res.status(400).json({message: "The email already exists, please try another one."});
         }
 
-        // Bcrypt generates a random encryption
+
         const salt = await bcrypt.genSalt();
-        //Will apply the encryption to our password to get new encrypted password
         const passwordHash = await bcrypt.hash(password, salt);
 
-        //Creating a new user using the data given above
         const newUser = new User({
             firstName,
             lastName,
@@ -45,13 +43,12 @@ export const register = async (req, res) => {
             occupation,
         });
 
-        //Save the details of new user
         const savedUser = await newUser.save();
 
         // hash password
         const token = jwt.sign({id: newUser._id}, process.env.JWT_VERIFY_MAIL, {expiresIn: "1h"});
 
-        const verificationLink = `${import.meta.env.VITE_PORT_BACKEND}/auth/verify-email?token=${token}`;
+        const verificationLink = `${process.env.BACK_END_PORT}/auth/verify-email?token=${token}`;
         await sendEmail(
             email,
             "Xác thực tài khoản",
@@ -62,8 +59,6 @@ export const register = async (req, res) => {
             <p>Nếu <span>không</span> phải bạn, vui lòng bỏ qua email này</p>`
         );
 
-
-        //Send status code 201 i.e req was successful and a resource is created
         res.status(201).json(savedUser);
 
     } catch (err) {
@@ -76,17 +71,16 @@ export const register = async (req, res) => {
 //-------------Logging In---------------
 export const login = async (req, res) => {
     try {
-        //Grab email and password when User sends login info via frontend
         const {email, password} = req.body;
 
         const user = await User.findOne({email: email});
-        //If user doesn't exist
+
         if (!user) {
             return res.status(400).json({msg: "User does not exist."});
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        //If wrong password,
+
         if (!isMatch) {
             return res.status(400).json({msg: "Invalid credentials."});
         }
@@ -109,7 +103,8 @@ export const verifyEmail = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_VERIFY_MAIL);
         await User.findByIdAndUpdate(decoded.id, {isVerified: true});
 
-        res.status(200).json({message: "Tài khoản đã được xác thực thành công!"});
+        // res.status(200).json({message: "Tài khoản đã được xác thực thành công!"});
+        res.redirect(`${process.env.FRONT_END_PORT}`)
     } catch (error) {
         res.status(400).json({error: "Token không hợp lệ hoặc đã hết hạn."});
     }

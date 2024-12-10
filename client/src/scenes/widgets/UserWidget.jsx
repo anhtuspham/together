@@ -39,14 +39,14 @@ const UserWidget = ({userId, picturePath}) => {
         isPublic: true,
     });
 
-    const {_id} = useSelector((state) => state.user);
+    const {_id} = useSelector((state) => state.auth.user);
     const isSelf = userId === _id;
 
     const {palette} = useTheme();
     const navigate = useNavigate();
-    const token = useSelector((state) => state.token);
-    const currentUserId = useSelector((state) => state.user._id);
-    const currFriends = useSelector((state) => state.user.friends);
+    const token = useSelector((state) => state.auth.token);
+    const currentUserId = useSelector((state) => state.auth.user._id);
+    const currFriends = useSelector((state) => state.auth.user.friends);
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;

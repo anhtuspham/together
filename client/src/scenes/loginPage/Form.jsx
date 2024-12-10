@@ -126,6 +126,7 @@ const Form = () => {
       } else {
         setLoginError(false); // Reset login error to false
         // onSubmitProps.resetForm();
+        console.log('Set login: ',loggedIn)
         dispatch(
           setLogin({
             user: loggedIn.user,

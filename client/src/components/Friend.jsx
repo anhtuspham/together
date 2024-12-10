@@ -6,20 +6,19 @@ import {useNavigate} from "react-router-dom";
 import {setFriends, setReceivedFriend, setSentFriends} from "../state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
+import {showNotification} from "../state/notificationSlice.js";
 
 const Friend = ({friendId, name, subtitle, userPicturePath}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {_id} = useSelector((state) => state.user);
-    const token = useSelector((state) => state.token);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const {_id} = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
 
     const [friendStatus, setFriendStatus] = useState({status: null, isSender: null});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const receivedFriends = useSelector((state) => state.user.receivedFriends);
-    const sentFriends = useSelector((state) => state.user.sentFriends);
+    const receivedFriends = useSelector((state) => state.auth.user.receivedFriends);
+    const sentFriends = useSelector((state) => state.auth.user.sentFriends);
 
     const {palette} = useTheme();
     const primaryLight = palette.primary.light;
@@ -107,9 +106,13 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             await fetchFriendStatus();
             await getSentFriendsRequest();
             await getReceivedFriendsRequest();
-            if(response.status === 201){
-                setOpenSnackbar(true);
-                setSnackbarMessage('Đã gửi lời mời')
+            if (response.ok) {
+                dispatch(
+                    showNotification({
+                        message: "Đã gửi lời mời!",
+                        type: "success",
+                    })
+                );
             }
 
         } catch (error) {
@@ -158,9 +161,13 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             await fetchFriendStatus();
             await getFriends();
 
-            if(response.status === 201){
-                setOpenSnackbar(true);
-                setSnackbarMessage('Đã chấp nhận lời mời kết bạn')
+            if (response.ok) {
+                dispatch(
+                    showNotification({
+                        message: "Kết bạn thành công!",
+                        type: "success",
+                    })
+                );
             }
 
         } catch (e) {
@@ -180,15 +187,17 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             });
             if (!response.ok) {
                 throw new Error("Failed to send friend request");
-            }
-            const data = await response.json();
-            await getReceivedFriendsRequest();
-            await getFriends();
-            await fetchFriendStatus();
+            } else if (response.ok) {
+                await getReceivedFriendsRequest();
+                await getFriends();
+                await fetchFriendStatus();
 
-            if(response.status === 201){
-                setOpenSnackbar(true);
-                setSnackbarMessage('Từ chối lời mời kết bạn')
+                dispatch(
+                    showNotification({
+                        message: "Đã từ chối",
+                        type: "success",
+                    })
+                );
             }
 
         } catch (e) {
@@ -210,22 +219,21 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
             );
             if (!response.ok) {
                 throw new Error("Failed to update friend status");
-            }
-            const data = await response.json();
-            dispatch(setFriends({friends: data}));
-            await fetchFriendStatus();
+            } else if (response.ok) {
+                const data = await response.json();
+                dispatch(setFriends({friends: data}));
+                await fetchFriendStatus();
 
-            if(response.status === 201 || response.status === 200){
-                setOpenSnackbar(true);
-                setSnackbarMessage('Đã xóa bạn bè')
+                dispatch(
+                    showNotification({
+                        message: "Đã xóa bạn khỏi danh sách",
+                        type: "success",
+                    })
+                );
             }
         } catch (error) {
             setError(error.message);
         }
-    };
-
-    const handleSnackbarClose = () => {
-        setOpenSnackbar(false);
     };
 
 
@@ -314,12 +322,6 @@ const Friend = ({friendId, name, subtitle, userPicturePath}) => {
                     )}
                 </Box>
             )}
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                message={snackbarMessage}
-            />
         </FlexBetween>
     );
 };

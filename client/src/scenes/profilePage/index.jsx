@@ -12,8 +12,8 @@ import RecentActivities from "../widgets/RecentActivities.jsx";
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
-  const {_id} = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const {_id} = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const isSelf = userId === _id;

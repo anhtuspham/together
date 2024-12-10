@@ -50,15 +50,15 @@ const PostWidget = ({
     const [PostCategory, setPostCategory] = useState(false);
     const [selectedReason, setSelectedReason] = useState("");
     const [reportModalOpen, setReportModalOpen] = useState(false);
-    const currentUserId = useSelector((state) => state.user._id);
+    const currentUserId = useSelector((state) => state.auth.user._id);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
 
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
-    const token = useSelector((state) => state.token);
-    const loggedInUserId = useSelector((state) => state.user._id);
+    const token = useSelector((state) => state.auth.token);
+    const loggedInUserId = useSelector((state) => state.auth.user._id);
     const port = import.meta.env.VITE_PORT_BACKEND;
 
     const isLiked = Boolean(likes[loggedInUserId]);
@@ -243,7 +243,6 @@ const PostWidget = ({
                     reason: selectedReason,
                 })
             });
-            console.log('data: ', response)
             // dispatch(setPost({ post: response.data }));
 
             if(response.status === 201 || response.status === 200){

@@ -8,7 +8,7 @@ import ChatDetail from '../../components/ChatDetail';
 
 const ChatPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const fullName = `${user.firstName} ${user.lastName}`;
   const [fetchAgain, setFetchAgain] = useState(false);
 

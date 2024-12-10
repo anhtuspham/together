@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
-import { useSelector } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {Box, Typography, Button} from "@mui/material";
+import {useSelector} from "react-redux";
+import {toast, ToastContainer} from "react-toastify";
 
-const GroupRequests = ({ groupId }) => {
+const GroupRequests = ({groupId}) => {
     const [requests, setRequests] = useState([]);
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const [isAdmin, setIsAdmin] = useState(false);
-    const currentUserId = useSelector((state) => state.user._id);
+    const currentUserId = useSelector((state) => state.auth.user._id);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
-    // Lấy danh sách yêu cầu
+
     useEffect(() => {
         const checkAdminStatus = async () => {
             try {
-                console.log('group Id: ', groupId)
                 const response = await fetch(`${import.meta.env.VITE_PORT_BACKEND}/group/${groupId}/${currentUserId}/status`, {
                     method: "GET",
                     headers: {
@@ -53,7 +55,6 @@ const GroupRequests = ({ groupId }) => {
         checkAdminStatus();
     }, [groupId, token]);
 
-    // Phê duyệt yêu cầu
     const handleApprove = async (userId) => {
         try {
             const response = await fetch(
@@ -74,7 +75,6 @@ const GroupRequests = ({ groupId }) => {
         }
     };
 
-    // Từ chối yêu cầu
     const handleDeny = async (userId) => {
         try {
             const response = await fetch(
@@ -99,6 +99,8 @@ const GroupRequests = ({ groupId }) => {
         return <Typography variant="body2"></Typography>;
     }
 
+    const notify = () => toast("Wow so easy!");
+
     return (
         <Box>
             <Typography variant="h6">Yêu cầu vào nhóm</Typography>
@@ -114,7 +116,10 @@ const GroupRequests = ({ groupId }) => {
                                 Xóa
                             </Button>
                         </Box>
+                        <Button onClick={notify}>Notify!</Button>
+                        <ToastContainer/>
                     </Box>
+
                 ))
             ) : (
                 <Typography>Không có yêu cầu nào</Typography>

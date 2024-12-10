@@ -10,7 +10,7 @@ const ChatSearchBar = ({helpertext, onClickAction, handleGroup, handleAddUser}) 
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
   
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;

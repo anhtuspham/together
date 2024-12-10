@@ -29,10 +29,10 @@ import Alert from "./Alert";
 const GroupChatModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const [selectedUsers, setSelectedUsers] = useState([user]);
   const [loading, setLoading] = useState(false);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
   
  
   const [open, setOpen] = useState(false);

@@ -11,8 +11,8 @@ import axios from "axios";
 const UserListItem = ({ friendId, name, subtitle, userPicturePath, onClickAction, userToAdd, handleGroup, handleAddUser}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const { _id } = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const [error, setError] = useState(null);
   const [loadingChat, setLoadingChat] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);

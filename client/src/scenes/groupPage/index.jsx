@@ -13,7 +13,7 @@ import PostsWidget from "../widgets/PostsWidget.jsx";
 
 
 const GroupPage = () => {
-    const currentUserId = useSelector((state) => state.user._id);
+    const currentUserId = useSelector((state) => state.auth.user._id);
 
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 

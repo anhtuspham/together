@@ -11,16 +11,15 @@ import { useDispatch } from 'react-redux';
 
 const SavedPage = () => {
   const dispatch = useDispatch();
-  const posts = useSelector((state) => state.posts);
+  const posts = useSelector((state) => state.auth.posts);
   const [savedPosts, setSavedPosts] = useState([]);
   const [fetchedPosts, setFetchedPosts] = useState([]);
-  const loggedUserId = useSelector((state) => state.user._id);
-  const token = useSelector((state) => state.token);
+  const loggedUserId = useSelector((state) => state.auth.user._id);
+  const token = useSelector((state) => state.auth.token);
   const isNonMobileScreens = useMediaQuery('(min-width:1000px)');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
    const getSavedPosts = async () => {
-    console.log("UserId is:", loggedUserId);
     try {
       const response = await axios.get(`${import.meta.env.VITE_PORT_BACKEND}/saved/${loggedUserId}`, {
         headers: {
@@ -46,7 +45,6 @@ const SavedPage = () => {
     );
 
     const responses = await axios.all(requests);
-     console.log('Responses', responses);
     const fetchedPosts = responses.map((response) => response.data[0]);
     console.log('Fetched Posts:', fetchedPosts);
     const fetchedPostsWithCategory = fetchedPosts.map((fetchedPost) => {
@@ -81,15 +79,12 @@ const SavedPage = () => {
     }
   }, [savedPosts]);
 
-  console.log("The saved Posts are: ", savedPosts);
 
   const handleCategoryChange = (event) => {
-    console.log("Category",event.target.value)
     setSelectedCategory(event.target.value);
   };
 
 
-  console.log("Here: ", fetchedPosts)
   // const cat = fetchedPosts.map((image) => image.category);
   // console.log(cat);
   const filteredImages = selectedCategory === 'all'

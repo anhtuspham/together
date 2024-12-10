@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 
 const GroupListItem = ({ groupId, name, description, picturePath }) => {
     const [isJoined, setIsJoined] = useState(false);
-    const currentUserId = useSelector((state) => state.user._id);
+    const currentUserId = useSelector((state) => state.auth.user._id);
     const [isAdmin, setIsAdmin] = useState(false);
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 

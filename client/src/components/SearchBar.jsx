@@ -10,7 +10,7 @@ const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userResults, setUserResults] = useState([]);
   const [groupResults, setGroupResults] = useState([]);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;

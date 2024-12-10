@@ -9,8 +9,8 @@ import {setSentFriends} from "../../state";
 const SentFriendListWidget = ({userId}) => {
     const dispatch = useDispatch();
     const {palette} = useTheme();
-    const token = useSelector((state) => state.token);
-    const sentFriends = useSelector((state) => state.user.sentFriends);
+    const token = useSelector((state) => state.auth.token);
+    const sentFriends = useSelector((state) => state.auth.user.sentFriends);
 
     return (
         <WidgetWrapper>

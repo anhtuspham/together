@@ -8,8 +8,8 @@ import {removeReceivedFriend, setFriends} from "../../state";
 const FriendListWidget = ({userId}) => {
     const dispatch = useDispatch();
     const {palette} = useTheme();
-    const token = useSelector((state) => state.token);
-    const friends = useSelector((state) => state.user.friends);
+    const token = useSelector((state) => state.auth.token);
+    const friends = useSelector((state) => state.auth.user.friends);
 
     const getFriends = async () => {
         const response = await fetch(

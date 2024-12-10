@@ -15,6 +15,7 @@ import {setLogout} from "./state/index.js";
 import Admin from "./scenes/admin/index.jsx";
 import AdminPage from "./scenes/admin/index.jsx";
 import GroupPage from "./scenes/groupPage/index.jsx";
+import Notification from "./components/miscellaneous/Notification.jsx"
 
 
 function App() {
@@ -22,11 +23,11 @@ function App() {
     const dispatch = useDispatch();
 
     const mode = useSelector((state) => state.mode);
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const isAuth = Boolean(token);
     let isAdmin = false;
 
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.auth.user);
     if (user) {
         isAdmin = user.role === 'admin';
     }
@@ -48,6 +49,7 @@ function App() {
     return (
         <div className="app">
             <BrowserRouter>
+                <Notification/>
                 <ThemeProvider theme={theme}>
                     <CssBaseline/>
                     <Routes>

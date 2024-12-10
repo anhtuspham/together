@@ -6,7 +6,7 @@ import { ChatState } from "../../Context/ChatProvider";
 
 const UserBadgeItem = ({ user, handleFunction, admin }) => {
 
-  const {_id} = useSelector((state) => state.user);
+  const {_id} = useSelector((state) => state.auth.user);
   const isSelf = user._id === _id;
   const {selectedChat} = ChatState();
 

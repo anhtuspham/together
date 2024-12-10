@@ -222,7 +222,6 @@ export const getGroupsUserHasJoined = async (req, res) => {
             members: userId,
         }).populate('members', 'firstName lastName');
 
-        console.log('joined: ', groups);
         res.status(200).json(groups);
     } catch (error) {
         console.error(error);

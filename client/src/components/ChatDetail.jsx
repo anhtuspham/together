@@ -27,14 +27,14 @@ const ENDPOINT = `${import.meta.env.VITE_PORT_BACKEND}`;
 let socket, selectedChatCompare;
 
 const ChatDetail = ({fetchAgain, setFetchAgain}) => {
-  const loggedUser = useSelector((state) => state.user);
+  const loggedUser = useSelector((state) => state.auth.user);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;

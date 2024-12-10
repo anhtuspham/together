@@ -32,10 +32,10 @@ export default function ResponsiveDialog( {fetchMessages, fetchAgain, setFetchAg
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [groupChatName, setGroupChatName] = useState();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const [selectedUsers, setSelectedUsers] = useState([user]);
   const [loading, setLoading] = useState(false);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.token);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [renameloading, setRenameLoading] = useState(false);
 

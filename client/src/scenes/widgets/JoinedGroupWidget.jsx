@@ -3,7 +3,7 @@ import {Card, CardContent, Typography, Grid, Box} from "@mui/material";
 import {useSelector} from "react-redux";
 
 const JoinedGroups = ({userId}) => {
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {

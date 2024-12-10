@@ -18,8 +18,8 @@ const PostCategorizer = ({
 }) => {
   const [category, setCategory] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const token = useSelector((state) => state.token);
-  // const {_id} = useSelector((state) => state.user);
+  const token = useSelector((state) => state.auth.token);
+  // const {_id} = useSelector((state) => state.auth.user);
   // const userId = _id;
 
   const handleCategoryChange = (event) => {

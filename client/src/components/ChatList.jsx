@@ -8,7 +8,7 @@ import UserChats from '../components/UserChats';
 import { ChatState } from "../Context/ChatProvider";
 
 const ChatList = ({fetchAgain, setFetchAgain}) => {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const { selectedChat } = ChatState();
 
   return (

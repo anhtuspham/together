@@ -5,8 +5,8 @@ import PostWidget from "./PostWidget";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
-  const posts = useSelector((state) => state.posts);
-  const token = useSelector((state) => state.token);
+  const posts = useSelector((state) => state.auth.posts);
+  const token = useSelector((state) => state.auth.token);
   const [error, setError] = useState(null);
 
 

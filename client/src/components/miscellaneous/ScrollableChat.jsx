@@ -12,8 +12,8 @@ import UserImage from "../../components/UserImage";
 
 const ScrollableChat = ({ messages }) => {
 //   const { user } = ChatState();
-    const user = useSelector((state) => state.user);
-    // const {_id } = useSelector((state) => state.user);
+    const user = useSelector((state) => state.auth.user);
+    // const {_id } = useSelector((state) => state.auth.user);
 
   return (
     <ScrollableFeed>

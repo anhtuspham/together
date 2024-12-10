@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 const RecentActivities = () => {
     const [activities, setActivities] = useState([]);
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
 
     useEffect(() => {
         const fetchActivities = async () => {

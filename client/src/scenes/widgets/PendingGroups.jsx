@@ -3,7 +3,7 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
 const PendingGroups = ({ userId }) => {
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {

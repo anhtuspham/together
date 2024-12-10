@@ -38,7 +38,7 @@ const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const {
     setSelectedChat,
     notification,
@@ -46,7 +46,7 @@ const Navbar = () => {
     chats,
     setChats,
   } = ChatState();
-  // const {user, _id, picturePath} = useSelector((state) => state.user);
+  // const {user, _id, picturePath} = useSelector((state) => state.auth.user);
 
   //Hook in Material UI that allows to determine whether current screen size is 
   // below this min-width or higher than it

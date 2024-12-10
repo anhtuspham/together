@@ -122,7 +122,6 @@ export const {
     setFriends,
     setReceivedFriend,
     setSentFriends,
-    removeSentFriend,
     removeReceivedFriend,
     setPost,
     setPosts,

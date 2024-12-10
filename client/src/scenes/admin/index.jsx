@@ -22,7 +22,7 @@ import {Delete, Edit} from "@mui/icons-material";
 import {useSelector} from "react-redux";
 
 const AdminPage = () => {
-    const token = useSelector((state) => state.token);
+    const token = useSelector((state) => state.auth.token);
     const [users, setUsers] = useState([]);
     const [posts, setPosts] = useState([]);
     const [groups, setGroups] = useState([]);

@@ -15,8 +15,8 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
 
     // const [loggedUser, setLoggedUser] = useState();
     const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-    const loggedUser = useSelector((state) => state.user);
-    const token = useSelector((state) => state.token);
+    const loggedUser = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
     const { palette } = useTheme();
     const primaryLight = palette.primary.light;
     const primaryDark = palette.primary.dark;

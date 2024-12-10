@@ -8,8 +8,8 @@ import {removeReceivedFriend, setFriends, setReceivedFriend} from "../../state";
 const ReceivedFriendListWidget = ({userId}) => {
     const dispatch = useDispatch();
     const {palette} = useTheme();
-    const token = useSelector((state) => state.token);
-    const receivedFriends = useSelector((state) => state.user.receivedFriends);
+    const token = useSelector((state) => state.auth.token);
+    const receivedFriends = useSelector((state) => state.auth.user.receivedFriends);
 
     return (
         <WidgetWrapper>

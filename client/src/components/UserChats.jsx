@@ -87,7 +87,7 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
                     width: "100%",
                     borderRadius: "8px",
                     overflowY: "auto",
-                    backgroundColor: "#F8F8F8",
+                    backgroundColor: palette.background.default,
                     padding: "16px",
                     boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
                 }}
@@ -103,7 +103,7 @@ const UserChats = ({ fetchAgain, setFetchAgain }) => {
                                     padding: "12px",
                                     borderRadius: "8px",
                                     backgroundColor:
-                                        selectedChat === chat ? palette.primary.main : "#dcdbdb",
+                                        selectedChat === chat ? palette.primary.main : palette.background.paper,
 
                                 }}
                             >

@@ -34,8 +34,10 @@
     "react-scrollable-feed": "^2.0.2",
     "react-toastify": "^10.0.6",
     "redux-persist": "^6.0.0",
+    "simple-peer": "^9.11.1",
     "socket.io-client": "^4.8.1",
     "web-vitals": "^4.2.4",
+    "webrtc": "^1.14.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {

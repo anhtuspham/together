@@ -144,7 +144,7 @@ const SavedPage = () => {
                   </Grid>
                   <Grid item>
                     <Typography variant='h6' component='h2'>
-                      No saved images found for this category
+                      Không có nội dung nào được lưu
                     </Typography>
                   </Grid>
                 </Grid>

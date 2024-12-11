@@ -16,6 +16,7 @@ import Admin from "./scenes/admin/index.jsx";
 import AdminPage from "./scenes/admin/index.jsx";
 import GroupPage from "./scenes/groupPage/index.jsx";
 import Notification from "./components/miscellaneous/Notification.jsx"
+import io from "socket.io-client";
 
 
 function App() {
@@ -26,6 +27,12 @@ function App() {
     const token = useSelector((state) => state.auth.token);
     const isAuth = Boolean(token);
     let isAdmin = false;
+    const socket = io('http://localhost:3001', {
+        query: { token: token }  // Truyền token qua query string
+    });
+    socket.on('connected', () => {
+        console.log('Successfully connected to WebSocket');
+    });
 
     const user = useSelector((state) => state.auth.user);
     if (user) {

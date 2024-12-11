@@ -72,6 +72,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const {email, password} = req.body;
+        console.log('email, password', email, password)
 
         const user = await User.findOne({email: email});
 
@@ -85,7 +86,7 @@ export const login = async (req, res) => {
             return res.status(400).json({msg: "Invalid credentials."});
         }
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "7d"});
+        const token = jwt.sign({id: user._id, userName: user.firstName + user.lastName}, process.env.JWT_SECRET, {expiresIn: "7d"});
 
         delete user.password;
 
@@ -119,7 +120,7 @@ export const forgotPassword = async (req, res) => {
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
 
-        const resetLink = `http://localhost:5173/auth/reset-password?token=${token}`;
+        const resetLink = `${process.env.FRONT_END_PORT}/auth/reset-password?token=${token}`;
         await sendEmail(
             email,
             "Đặt lại mật khẩu",
